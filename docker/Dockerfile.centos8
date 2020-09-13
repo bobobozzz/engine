@@ -1,0 +1,14 @@
+ARG centos_version=8
+FROM centos:$centos_version
+# needed to do again after FROM due to docker limitation
+ARG centos_version
+
+# install dependencies
+run yum install -y gcc gcc-c++\
+    make \
+    boost-devel \
+    openssl-devel \
+    python3-devel \
+    pcre-devel \
+    zlib-devel \
+    && yum clean all
