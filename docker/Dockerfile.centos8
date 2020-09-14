@@ -12,3 +12,10 @@ run yum install -y gcc gcc-c++\
     pcre-devel \
     zlib-devel \
     && yum clean all
+
+copy . /var/engine
+workdir /var/engine/nginx
+
+run chmod +x ./auto/configure && ./auto/configure \
+    --prefix=/usr/local/nginx --add-module=/var/engine/engine \
+    && make && make install
