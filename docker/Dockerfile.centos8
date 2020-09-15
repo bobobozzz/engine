@@ -16,6 +16,6 @@ run yum install -y gcc gcc-c++\
 copy . /var/engine
 workdir /var/engine/nginx
 
-run chmod +x ./auto/configure && ./auto/configure \
+run chmod +x ./auto/configure && ./auto/configure --with-debug \
     --prefix=/usr/local/nginx --add-module=/var/engine/engine \
     && make && make install
