@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+
+  compile:
+    container_name: compile.engine
+    image: engine:v1.0
+    volumes:
+      - "~/code/engine:/var/engine"
+    command:
+      /bin/bash -c "tail -f /dev/null"

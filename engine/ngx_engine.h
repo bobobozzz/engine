@@ -7,7 +7,6 @@
 static char *ngx_http_engine(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static void *ngx_http_engine_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_engine_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child);
-
 static ngx_int_t ngx_http_engine_handler(ngx_http_request_t *r);
 
 typedef struct {

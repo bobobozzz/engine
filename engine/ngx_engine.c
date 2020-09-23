@@ -1,6 +1,7 @@
 /*BoBoBo*/
 
 #include "ngx_engine.h"
+#include "py.h"
 
 static char *
 ngx_http_engine(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
@@ -53,6 +54,7 @@ ngx_http_engine_handler(ngx_http_request_t *r)
     {
         return rc;
     }
+    ex_content(elcf->py_content);
     return ngx_http_output_filter(r, &out);
 }
 

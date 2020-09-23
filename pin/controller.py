@@ -1,5 +1,13 @@
+#BoBoBo#
+
+#!/usr/bin/env python3
+
 from functools import wraps
-from jinja2 import Environment, FileSystemLoader, FileSystemBytecodeCache, select_autoescape, Template
+from jinja2 import Environment, \
+    FileSystemLoader, \
+    FileSystemBytecodeCache, \
+    select_autoescape, \
+    Template
 import re
 import sys
 import json
@@ -34,9 +42,9 @@ class Pin:
             return wrapper_b
         return wrapper_a
         
-    def run(self, req, res):
+    def dispatch(self, req, res):
         for k, v in self.map.items():
-            if req.method() in v['method']:
+            if req['headers']['method'] in v['method']:
                 m = v['regex'].match(req.uri())
                 if m:
                     v['callback'](req, res, m.groupdict())
