@@ -44,8 +44,8 @@ class Pin:
         
     def dispatch(self, req, res):
         for k, v in self.map.items():
-            if req['headers']['method'] in v['method']:
-                m = v['regex'].match(req.uri())
+            if req['method'] in v['method']:
+                m = v['regex'].match(req['uri'])
                 if m:
                     v['callback'](req, res, m.groupdict())
                     break
@@ -79,8 +79,7 @@ class View:
         result = engine.render(variable)
         return str(result)
 
-    def forward(res, result, tpl_name):
+    def forward(self, res, result, tpl_name):
         res.header('Content-Type','text/plain;charset=utf-8')
-        res.content(view.render(tpl_name, result))
+        res.content(self.render(tpl_name, result))
         res.status(200)
-
