@@ -1,6 +1,6 @@
-#BoBoBo#
-
 #!/usr/bin/env python3
+
+#BoBoBo#
 
 from functools import wraps
 from jinja2 import Environment, \

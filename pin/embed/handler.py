@@ -1,7 +1,7 @@
-#BoBoBo#
-
 from http.server import BaseHTTPRequestHandler
 from http import HTTPStatus
+
+#BoBoBo#
 
 class PinHTTPRequestHandler(BaseHTTPRequestHandler):
 
