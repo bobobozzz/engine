@@ -11,6 +11,7 @@ from jinja2 import Environment, \
 import re
 import sys
 import json
+from http import HTTPStatus
 
 if sys.version_info.major < 3:
     reload(sys)
@@ -82,4 +83,4 @@ class View:
     def forward(self, res, result, tpl_name):
         res.header('Content-Type','text/plain;charset=utf-8')
         res.content(self.render(tpl_name, result))
-        res.status(200)
+        res.status(HTTPStatus.OK)

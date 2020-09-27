@@ -5,6 +5,7 @@ import contextlib
 import socket
 from http.server import *
 from functools import partial
+import sys
 
 def bootstrap(biz_handler_class):
     args = server_args()
@@ -28,7 +29,7 @@ def bootstrap(biz_handler_class):
 
 def serve(HandlerClass=BaseHTTPRequestHandler,
          ServerClass=ThreadingHTTPServer,
-         protocol="HTTP/1.0", port=8000, bind=None):
+         protocol="HTTP/1.1", port=8000, bind=None):
     ServerClass.address_family, addr = _get_best_family(bind, port)
 
     HandlerClass.protocol_version = protocol
