@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 #BoBoBo#
 
 from functools import wraps
