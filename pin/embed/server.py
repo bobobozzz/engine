@@ -6,8 +6,9 @@ import socket
 from http.server import *
 from functools import partial
 import sys
+from pin.embed.handler import PinHTTPRequestHandler
 
-def bootstrap(biz_handler_class):
+def bootstrap(biz_handler_class=PinHTTPRequestHandler):
     args = server_args()
 
     #handler_class = partial(biz_handler_class, directory=args.directory)
