@@ -1,21 +1,15 @@
 ARG centos_version=8
-FROM centos:$centos_version
+FROM centos:$centos_version as builder
 # needed to do again after FROM due to docker limitation
 ARG centos_version
 
 # install dependencies
 run yum install -y gcc gcc-c++\
     make \
-    boost-devel \
     openssl-devel \
-    python3-devel \
     pcre-devel \
     zlib-devel \
+    python3-devel \
     && yum clean all
 
-copy . /var/engine
 workdir /var/engine/nginx
-
-run chmod +x ./auto/configure && ./auto/configure --with-debug \
-    --prefix=/usr/local/nginx --add-module=/var/engine/engine \
-    && make && make install

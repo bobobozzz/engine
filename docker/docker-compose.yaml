@@ -1,11 +1,27 @@
-version: "3"
-
+version: '3'
 services:
 
-  compile:
-    container_name: compile.engine
-    image: engine:v1.0
+  engine_compiler:
+    container_name: engine.compiler
+    build:
+      context: ./context
+      dockerfile: ../Dockerfile.centos8
     volumes:
-      - "~/code/engine:/var/engine"
+      - ~/code/engine:/var/engine
+    ports:
+      - "8080:80"
+    environment:
+      - C_INCLUDE_PATH=/usr/include/python3.6m
     command:
-      /bin/bash -c "tail -f /dev/null"
+      - /bin/bash
+      - -c 
+      - |
+        chmod +x ./auto/configure
+        ./auto/configure --with-debug \
+          --prefix=/usr/local/nginx \
+          --add-module=/var/engine/engine \
+          --with-ld-opt="`python3.6m-config --ldflags`"
+        make
+        make install
+        tail -f /dev/null
+

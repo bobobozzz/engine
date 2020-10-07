@@ -1,6 +1,16 @@
 /*BoBoBo*/
 
-#include <Python.h>
-#include <ngx_core.h>
+#ifndef _CP_PY_H_INCLUDED_
+#define _CP_PY_H_INCLUDED_
 
-static void ex_content(ngx_str_t py_content);
+#include <Python.h>
+
+int initialize();
+
+void finalize();
+
+void ex_py_content(char *py_content);
+
+PyObject *ex_py_file(char *py_file, char *func_name, PyObject *pArgsT);
+
+#endif /* _CP_PY_H_INCLUDED_ */

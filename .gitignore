@@ -37,3 +37,8 @@
 
 # Python
 __pycache__
+
+# Project
+*.md.html
+
+cscope*

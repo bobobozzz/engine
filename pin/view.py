@@ -31,7 +31,7 @@ def render_json(result, headers=None):
 def render_html(tpl_file, tpl_param={}, headers=None):
     res = {}
     res['headers'] = {}
-    res['headers']['Content-Type'] = 'text/plain;charset=utf-8'
+    res['headers']['Content-Type'] = 'text/html;charset=utf-8'
     res['status'] = 200
     res['content'] = render(tpl_file, tpl_param)
     return res
@@ -39,8 +39,9 @@ def render_html(tpl_file, tpl_param={}, headers=None):
 def render_404():
     res = {}
     res['headers'] = {}
-    res['headers']['Content-Type'] = 'text/plain;charset=utf-8'
+    res['headers']['Content-Type'] = 'text/html;charset=utf-8'
     res['status'] = 404
+    res['content'] = ''
     return res
 
 def response_json(err_code, err_msg, data):

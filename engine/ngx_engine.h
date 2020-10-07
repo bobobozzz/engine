@@ -1,8 +1,14 @@
 /*BoBoBo*/
 
+#ifndef _NGX_ENGINE_H_INCLUDED_
+#define _NGX_ENGINE_H_INCLUDED_
+
 #include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
+
+#include "cp/py.h"
+#include "cp/util.h"
 
 static char *ngx_http_engine(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 static void *ngx_http_engine_create_loc_conf(ngx_conf_t *cf);
@@ -53,3 +59,4 @@ ngx_module_t  ngx_http_engine_module = {
     NGX_MODULE_V1_PADDING
 };
 
+#endif /* _NGX_ENGINE_H_INCLUDED_ */

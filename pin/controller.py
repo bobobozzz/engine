@@ -2,6 +2,7 @@
 
 #BoBoBo#
 
+import json
 from http import HTTPStatus
 from functools import wraps
 from pin.view import render_404
@@ -19,10 +20,15 @@ def app():
         return wrapper_a
     return url_map, route
 
-def dispatch(url, param):
-    action = urls.get(url)
+def dispatch(request):
+    path = request['path']
+    action = urls.get(path)
     if None is action:
-        render_404()
-    return action(param)
+        return render_404()
+    else:
+        #TODO: check content-type and parse param
+        body = request['body']
+        param = json.loads(body)
+        return action(param)
 
 urls, route = app()
