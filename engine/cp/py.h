@@ -5,12 +5,12 @@
 
 #include <Python.h>
 
-int initialize();
+PyObject *load_py_script_dict = NULL;
+PyObject *load_py_func = NULL;
 
-void finalize();
-
+int py_initialize(char *py_file, char *py_func);
+void py_finalize();
 void ex_py_content(char *py_content);
-
-PyObject *ex_py_file(char *py_file, char *func_name, PyObject *pArgsT);
+PyObject *ex_py_file(PyObject *pArgsT);
 
 #endif /* _CP_PY_H_INCLUDED_ */
