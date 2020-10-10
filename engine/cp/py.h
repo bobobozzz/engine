@@ -5,9 +5,6 @@
 
 #include <Python.h>
 
-PyObject *load_py_script_dict = NULL;
-PyObject *load_py_func = NULL;
-
 int py_initialize(char *py_file, char *py_func);
 void py_finalize();
 void ex_py_content(char *py_content);

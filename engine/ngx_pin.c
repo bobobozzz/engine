@@ -13,8 +13,6 @@ pin(ngx_http_request_t *r)
 PyObject *
 assemble_dict(ngx_http_request_t *r)
 {
-    size_t len;
-
     //TODO: get body str from request or url param
     char *r_body = "test";
 

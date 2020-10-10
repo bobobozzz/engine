@@ -2,6 +2,9 @@
 
 #include "py.h"
 
+PyObject *load_py_script_dict;
+PyObject *load_py_func;
+
 int
 py_initialize(char *py_file, char *py_func)
 {
