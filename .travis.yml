@@ -1,0 +1,31 @@
+language: c
+sudo: required
+addons:
+  apt:
+    packages:
+      - locales
+      - language-pack-de
+      - re2c
+      - libgmp-dev
+      - libicu-dev
+      - libmcrypt-dev
+      - libtidy-dev
+      - libenchant-dev
+      - libaspell-dev
+      - libpspell-dev
+      - librecode-dev
+      - libsasl2-dev
+      - libxpm-dev
+      - libt1-dev
+      - cpanminus
+compiler:
+  - gcc
+cache:
+  - apt
+env:
+  - PYTHON_SRC_VERSION=3.6m
+    NGINX_SRC_VERSION=1.19.3
+install:
+  - sudo cpanm -n Test::Nginx
+script:
+  - echo "CI succeed!"

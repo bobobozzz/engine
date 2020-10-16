@@ -23,6 +23,10 @@
 - Python 3.6.*
 - nginx-1.6.3+ 
 
+test:
+
+- cunit-2.1-3
+
 ## Installation
 
 ```sh

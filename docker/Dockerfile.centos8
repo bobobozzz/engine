@@ -3,6 +3,8 @@ FROM centos:$centos_version as builder
 # needed to do again after FROM due to docker limitation
 ARG centos_version
 
+ARG nginx_version=${nginx_version}
+
 # install dependencies
 run yum install -y gcc gcc-c++\
     make \
@@ -10,6 +12,12 @@ run yum install -y gcc gcc-c++\
     pcre-devel \
     zlib-devel \
     python3-devel \
-    && yum clean all
+    wget \
+    perl-CPAN \
+    && yum clean all \
+    && echo yes | cpan Test:Nginx
 
-workdir /var/engine/nginx
+workdir /var/nginx
+run wget 'http://nginx.org/download/nginx-${nginx_version}.tar.gz' \
+    && tar -zxvf nginx-${nginx_version}.tar.gz
+workdir /var/nginx/nginx-${nginx_version}

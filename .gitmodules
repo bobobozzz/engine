@@ -1,3 +1,0 @@
-[submodule "test/CUnit"]
-	path = test/CUnit
-	url = https://github.com/pi2p/CUnit.git

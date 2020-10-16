@@ -6,6 +6,8 @@ services:
     build:
       context: ./context
       dockerfile: ../Dockerfile.centos8
+      args:
+        nginx_version: 1.19.3
     volumes:
       - ~/code/engine:/var/engine
     ports:
@@ -16,8 +18,7 @@ services:
       - /bin/bash
       - -c 
       - |
-        chmod +x ./auto/configure
-        ./auto/configure --with-debug \
+        ./configure --with-debug \
           --prefix=/usr/local/nginx \
           --add-module=/var/engine/engine \
           --with-ld-opt="`python3.6m-config --ldflags`"
