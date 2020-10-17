@@ -20,7 +20,7 @@
 
 ## Requirement
 
-- Python 3.6.*
+- Python 3.6+
 - nginx-1.6.3+ 
 
 test:
@@ -32,14 +32,14 @@ test:
 ```sh
 $ git clone https://github.com/bobobozzz/engine.git
 
-$ wget 'http://nginx.org/download/nginx-1.6.3.tar.gz'
-$ tar -zxvf nginx-1.6.3.tar.gz
-$ cd nginx-1.6.3
+$ wget 'http://nginx.org/download/nginx-1.19.3.tar.gz'
+$ tar -zxvf nginx-1.19.3.tar.gz
+$ cd nginx-1.19.3
 
 $ ./configure --user=www --group=www \
       --prefix=/path/to/nginx \
       --add-module=/path/to/engine/engine \
-      --with-ld-opt="`python3.6m-config --ldflags`"
+      --with-ld-opt="`python3.6-config --ldflags`"
 
 $ make
 $ make install
@@ -68,7 +68,7 @@ http {
         server_name  localhost;
 
         location * {
-            engine /usr/local/pin_app_example/app.py;
+            engine /path/to/engine/example/hello/hello/app.py;
         }
     }
 }
@@ -77,8 +77,8 @@ http {
 execute:
 
 ```sh
-$ curl http://localhost/hello_engine
-Hello Engine!
+$ curl http://localhost/engine_example/hello
+{"err_code": 0, "err_msg": "", "data": {"content": "Hello Engine!"}}
 ```
 
 docker(just an enviroment to run engine from code now):

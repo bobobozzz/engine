@@ -17,7 +17,11 @@ def tpl_path():
     conf = configparser.ConfigParser()
     conf_file = os.getcwd() + '/etc/app.conf' 
     conf.read(conf_file)
-    path = conf.get('app', 'template_path')
+    try:
+        path = conf.get('app', 'template_path')
+    except configparser.NoSectionError as e:
+        #TODO: Warn in log.
+        return ''
     return path
 
 def render_json(result, headers=None):

@@ -21,7 +21,7 @@ services:
         ./configure --with-debug \
           --prefix=/usr/local/nginx \
           --add-module=/var/engine/engine \
-          --with-ld-opt="`python3.6m-config --ldflags`"
+          --with-ld-opt="`python3.6-config --ldflags`"
         make
         make install
         tail -f /dev/null
