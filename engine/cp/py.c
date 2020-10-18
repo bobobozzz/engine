@@ -5,41 +5,44 @@
 PyObject *load_py_script_dict;
 PyObject *load_py_func;
 
-int
+char *
 py_initialize(char *py_file, char *py_func)
 {
     Py_Initialize();  
     if (!Py_IsInitialized()) {  
-        return -1;  
+        return "Failed to init python vm.";  
     }
+
+    /*
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("sys.path.append('/var/engine/example')");
+    */
 
     PyObject *pName, *pModule, *pDict, *pFunc;
     pName =  PyUnicode_FromString(py_file);  
     pModule = PyImport_Import(pName);  
     if (!pModule) {  
-        return -1;  
+        return "Failed to import python module";  
     }  
     pDict = PyModule_GetDict(pModule);  
     if (!pDict) {  
-        return -1;  
+        return "Failed to get python module dict.";  
     } 
 
     load_py_script_dict = pDict;
 
     pFunc = PyDict_GetItemString(pDict, py_func);  
     if (!pFunc || !PyCallable_Check(pFunc)) {  
-        return -1;  
+        return "Failed to get python function.";  
     }
 
     load_py_func = pFunc;
-    return 0;
+    return NULL;
 }
 
 void
 py_finalize()
 {
-    Py_DECREF(load_py_script_dict);  
-    Py_DECREF(load_py_func);  
     Py_Finalize();  
 }
 

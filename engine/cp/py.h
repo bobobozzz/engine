@@ -5,7 +5,7 @@
 
 #include <Python.h>
 
-int py_initialize(char *py_file, char *py_func);
+char *py_initialize(char *py_file, char *py_func);
 void py_finalize();
 void ex_py_content(char *py_content);
 PyObject *ex_py_file(PyObject *pArgsT);

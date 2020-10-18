@@ -67,7 +67,7 @@ http {
         listen       80;
         server_name  localhost;
 
-        location * {
+        location / {
             engine /path/to/engine/example/hello/hello/app.py;
         }
     }
