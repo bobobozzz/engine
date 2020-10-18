@@ -13,10 +13,8 @@ py_initialize(char *py_file, char *py_func)
         return "Failed to init python vm.";  
     }
 
-    /*
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("sys.path.append('/var/engine/example')");
-    */
 
     PyObject *pName, *pModule, *pDict, *pFunc;
     pName =  PyUnicode_FromString(py_file);  

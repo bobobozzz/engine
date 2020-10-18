@@ -50,8 +50,10 @@ $ make install
 configure nginx:
 
 ```
-user www www;
-worker_processes  4;
+worker_processes  1;
+
+daemon off;
+master_process off;
 
 events {
     worker_connections  1024;
@@ -68,7 +70,8 @@ http {
         server_name  localhost;
 
         location / {
-            engine /path/to/engine/example/hello/hello/app.py;
+            engine on;
+            engine_pin_app hello.app;
         }
     }
 }
@@ -90,7 +93,7 @@ docker-compose up -d engine_compiler
 
 ## Version Rules 
 
-N1.N2.N3
+N1.N2.N3[{a|b|rc}N][.postN]
 
  N1: Support Level
 
@@ -99,7 +102,7 @@ N1.N2.N3
 
  N2: Big Functions
 
- N3: Fix bugs
+ N3: Fix bugs (1-Pass base test)
 
 ## Contributors
 

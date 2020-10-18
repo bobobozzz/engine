@@ -45,11 +45,11 @@ ngx_http_engine_handler(ngx_http_request_t *r)
     //app
     u_char *path = ngx_pcalloc(r->pool, mycf->pin_app.len + 1);
     path[mycf->pin_app.len] = '\0';
-    ngx_cpystrn(path, mycf->pin_app.data, mycf->pin_app.len);
-    //char *pyfile = (char *)path;
+    ngx_cpystrn(path, mycf->pin_app.data, mycf->pin_app.len + 1);
+    char *pyfile = (char *)path;
 
     ngx_str_t response = ngx_null_string;
-    char *init_res = py_initialize("hello.app", "engine");
+    char *init_res = py_initialize(pyfile, "engine");
     if(NULL == init_res){
         response = pin(r);
     }else{
