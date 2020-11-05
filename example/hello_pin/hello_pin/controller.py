@@ -2,10 +2,9 @@
 
 #BoBoBo#
 
-from pin.controller import route
-from pin.view import render_json
+from pin.router import route
 from pin.view import response_json
 
-@route("/engine_example/hello", render_json)
+@route("/hello_pin/hello", response_json)
 def hello(param):
-    return response_json(0, '', {"content": "Hello Engine!"})
+    return response_json({"errCode":0, "errMsg":"", "content": "Hello Pin!"})

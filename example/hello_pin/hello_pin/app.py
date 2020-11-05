@@ -2,13 +2,11 @@
 
 #BoBoBo#
 
-from pin.controller import dispatch
+from pin.router import pin_app
 import controller
 
-def engine(request):
-    return dispatch(request)
+app = pin_app(True)
 
-#Run just by python with embed server.
 if __name__ == "__main__":
     import pin.embed.server as server
-    server.bootstrap()
+    server.bootstrap(app)

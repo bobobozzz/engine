@@ -11,21 +11,17 @@
 * Nginx call python script embedly.
 * Funcitonal web framework pin.
 * Pin has a python embed http server to support develop mode.
+* WSGI compliant.
 
 ## Todo
 
 * Make it to be a complete project to support enterprise-level development.
-* Support WSGI.
 * Support functional program well.
 
 ## Requirement
 
 - Python 3.6+
 - nginx-1.6.3+ 
-
-test:
-
-- cunit-2.1-3
 
 ## Installation
 
@@ -47,13 +43,16 @@ $ make install
 
 ## Useage
 
-configure nginx:
+1.Add environment variable ENGINEPATH which is the path to search python app script file.
+
+```
+export ENGINEPATH=path/to/app
+```
+
+2.Configure nginx like the example below and start it:
 
 ```
 worker_processes  1;
-
-daemon off;
-master_process off;
 
 events {
     worker_connections  1024;
@@ -69,19 +68,19 @@ http {
         listen       80;
         server_name  localhost;
 
-        location / {
+        location /hello {
             engine on;
-            engine_pin_app hello.app;
+            engine_wsgi hello:app;
         }
     }
 }
 ```
 
-execute:
+3.Request and get the response like this:
 
 ```sh
-$ curl http://localhost/engine_example/hello
-{"err_code": 0, "err_msg": "", "data": {"content": "Hello Engine!"}}
+$ curl http://localhost/hello
+Hello World!
 ```
 
 docker(just an enviroment to run engine from code now):
@@ -93,7 +92,7 @@ docker-compose up -d engine_compiler
 
 ## Version Rules 
 
-N1.N2.N3[{a|b|rc}N][.postN]
+N1.N2.N3[{a|b|rc}N][.dev][.postN]
 
  N1: Support Level
 

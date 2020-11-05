@@ -42,4 +42,5 @@ __pycache__
 *.md.html
 
 cscope*
-venv
+*_venv
+*-venv
