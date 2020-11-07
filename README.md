@@ -59,7 +59,6 @@ events {
 }
 
 http {
-    include       mime.types;
     default_type  application/octet-stream;
 
     keepalive_timeout  65;
