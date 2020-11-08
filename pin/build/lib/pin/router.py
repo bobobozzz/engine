@@ -10,10 +10,10 @@ from pin.view import response_404
 def router():
     url_map={}
 
-    def route(url, render):
+    def route(url, response_):
         def wrapper_a(func):
             def wrapper_b(*args):
-                return render(func(*args))
+                return response_(func(*args))
 
             url_map[url] = wrapper_b
             return wrapper_b
@@ -34,7 +34,7 @@ def dispatch(request):
         if 'GET' == method:
             query = request['QUERY_STRING']
             if '' == query:
-                action(None)
+                return action(None)
             else:
                 querys = query.split('&')
                 querys = list(map(lambda s : s.split('='), querys))
@@ -65,6 +65,8 @@ def pin_app(debug=False):
             start_response('500 INTERNAL SERVER ERROR', headers, sys.exc_info())
             return [to_bytes(err)]
         else:
+            if debug:
+                print(response)
             start_response(response['status'], response['headers'])
             return [to_bytes(response['content'])]
 

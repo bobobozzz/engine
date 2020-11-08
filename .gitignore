@@ -44,3 +44,6 @@ __pycache__
 cscope*
 *_venv
 *-venv
+build
+dist
+*egg*
