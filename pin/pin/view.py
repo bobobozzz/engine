@@ -28,6 +28,8 @@ def response_json(result, headers=None):
     res = {}
     res['headers'] = []
     res['headers'].append(('Content-Type', 'application/json;charset=utf-8'))
+    if headers:
+        res['headers'] += list(map(lambda k : (k, headers[k]), headers))
     res['status'] = '200 OK'
     res['content'] = json.dumps(result)
     return res
@@ -47,6 +49,9 @@ def response_404():
     res['status'] = '404 Not Found'
     res['content'] = ''
     return res
+
+def errcode_json(code, msg, data):
+    return {'errCode': code, 'errMsg': msg, 'data': data}
 
 def view(tpl_path):
     jinja2_env = Environment(
