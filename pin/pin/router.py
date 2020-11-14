@@ -13,7 +13,10 @@ def router():
     def route(url, response_):
         def wrapper_a(func):
             def wrapper_b(*args):
-                return response_(func(*args))
+                try:
+                    return response_(func(*args))
+                except Exception as e:
+                    return response_json(errcod_ret(-500, str(e), None))
 
             url_map[url] = wrapper_b
             return wrapper_b

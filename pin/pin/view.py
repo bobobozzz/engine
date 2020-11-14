@@ -5,7 +5,7 @@
 import os
 import sys
 import json
-import configparser
+import util
 
 from jinja2 import Environment, \
     FileSystemLoader, \
@@ -14,14 +14,7 @@ from jinja2 import Environment, \
     Template
 
 def tpl_path():
-    conf = configparser.ConfigParser()
-    conf_file = os.getcwd() + '/etc/app.conf' 
-    conf.read(conf_file)
-    try:
-        path = conf.get('app', 'template_path')
-    except configparser.NoSectionError as e:
-        #TODO: Warn in log.
-        return ''
+    path = util.get_conf('app', 'template_path', None)
     return path
 
 def response_json(result, headers=None):
@@ -50,10 +43,10 @@ def response_404():
     res['content'] = ''
     return res
 
-def errcode_json(code, msg, data):
-    return {'errCode': code, 'errMsg': msg, 'data': data}
-
 def view(tpl_path):
+    if not tpl_path:
+        return None
+
     jinja2_env = Environment(
         loader=FileSystemLoader(tpl_path),
         bytecode_cache=FileSystemBytecodeCache(tpl_path),

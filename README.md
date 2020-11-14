@@ -41,7 +41,7 @@ $ make
 $ make install
 ```
 
-## Useage
+## Usage
 
 1.Add environment variable ENGINEPATH which is the path to search python app script file.
 
