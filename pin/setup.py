@@ -2,25 +2,20 @@
 
 #BoBoBo#
 
-import os
 from setuptools import setup, find_packages
 
-def _process_requirements():
-    packages = open('requirements.txt').read().strip().split('\n')
-    requires = []
-    for pkg in packages:
-        if pkg.startswith('git+ssh'):
-            return_code = os.system('pip install {}'.format(pkg))
-            assert return_code == 0, 'error, status_code is: {}, exit!'.format(return_code)
-        else:
-            requires.append(pkg)
-    return requires
-
 setup(
-    name='pin',
-    version='0.2.2',
+    name='engine-pin',
+    version='0.2.10rc3',
+    keywords=("framework", "WSGI", "functional", "nginx"),
+    url='https://github.com/bobobozzz/engine.git',
     author='BoBoBo',
+    author_email='bobobonet@163.com',
     description="A functional and WSGI compliant web framework",
     packages=find_packages(),
-    install_requires=_process_requirements()
+    install_requires=['Jinja2>=2.11.2', 'MarkupSafe>=1.1.1',
+                      'pytest>=6.1.2', 'PyMySQL>=0.10.1', 'DBUtils>=2.0'],
+    include_package_data=True,
+    platforms="any",
+    license="GPL v3.0"
 )
