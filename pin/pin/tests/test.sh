@@ -1,26 +1,31 @@
 #!/bin/bash
 
-eval $(docker-machine env testing-server)
-
 target=
-clean=0
+clean=1
 
-while getopts 't:c' opts
+while getopts 't:r' opts
 do
     case $opts in
     t)
         target=$OPTARG
         ;;
-    c)
-        clean=1
+    r)
+        clean=0
         ;;
     esac
 done
 
-if [ $clean -eq 1 ]; then
-    echo "Start cleaning..."
-    ./clean-test.sh -t $target
-    echo "Cleaned all."
-fi
+clean(){
+    if [ $clean -eq 1 ]; then
+        echo "Start cleaning..."
+        docker-compose -f docker-compose-test.yaml down
+        echo "Cleaned all."
+    fi
+}
 
+clean
 docker-compose -f docker-compose-test.yaml up -d $target
+echo "Waiting..."
+sleep 5
+docker logs -f engine.test.pin
+clean

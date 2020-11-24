@@ -5,7 +5,7 @@
 import os
 import sys
 import json
-import util
+import kit.util as util
 
 from jinja2 import Environment, \
     FileSystemLoader, \
@@ -13,19 +13,22 @@ from jinja2 import Environment, \
     select_autoescape, \
     Template
 
+
 def tpl_path():
     path = util.get_conf('app', 'template_path', None)
     return path
+
 
 def response_json(result, headers=None):
     res = {}
     res['headers'] = []
     res['headers'].append(('Content-Type', 'application/json;charset=utf-8'))
     if headers:
-        res['headers'] += list(map(lambda k : (k, headers[k]), headers))
+        res['headers'] += list(map(lambda k: (k, headers[k]), headers))
     res['status'] = '200 OK'
     res['content'] = json.dumps(result)
     return res
+
 
 def response_html(tpl_file, tpl_param={}, headers=None):
     res = {}
@@ -35,6 +38,7 @@ def response_html(tpl_file, tpl_param={}, headers=None):
     res['content'] = render(tpl_file, tpl_param)
     return res
 
+
 def response_404():
     res = {}
     res['headers'] = []
@@ -42,6 +46,7 @@ def response_404():
     res['status'] = '404 Not Found'
     res['content'] = ''
     return res
+
 
 def view(tpl_path):
     if not tpl_path:
@@ -60,5 +65,6 @@ def view(tpl_path):
         return str(result)
 
     return render
+
 
 render = view(tpl_path())

@@ -5,15 +5,30 @@ services:
     image: mysql:5.7
     container_name: engine.test.mysql
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_DATABASE=db_test
       - MYSQL_USER=test
       - MYSQL_PASSWORD=test
     ports:
       - "3306:3306"
-  pin-on-3.6:
-    build:
-      context: ../..
-      dockerfile: ./pin/tests/Dockerfile.test
-      args:
-        python_version: 3.6
+  pin:
+    depends_on: 
+      - mysql
+    image: python:3
+    container_name: engine.test.pin
+    volumes:
+      - ../../:/var/app
+    ports:
+      - "8080:8080"
+    environment:
+      - PIN_DB_CONF=/var/app/pin/tests/pin.conf
+    command:
+      - sh
+      - -c
+      - |
+        cd /var/app
+        pip install -r requirements.txt
+        python setup.py install
+        cd /var/app/pin/tests
+        pip install -r requirements-test.txt
+        python -m pytest ut
