@@ -21,7 +21,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PIN_DB_CONF=/var/app/pin/tests/pin.conf
+      - PIN_CONF=/var/app/pin/tests/pin.conf
     command:
       - sh
       - -c

@@ -5,12 +5,14 @@
 import os
 import pymysql
 import pin.kit.db.db as db
+import pin.kit.util as util
+
 
 def get_dbconf():
-    conf_file = os.environ['PIN_DB_CONF']
-    return db.get_dbconf_from(conf_file, 'db')
+    return db.get_dbconf_from(util.conf, 'db')
 
-def query(sql, param = None):
+
+def query(sql, param=None):
     get_dbconn = db.get_db(pymysql, get_dbconf)
     conn = get_dbconn()
     if conn:

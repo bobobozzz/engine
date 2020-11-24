@@ -4,14 +4,38 @@
 
 import configparser
 import logging
+import os
 
-errcode_ret = lambda (code, msg, data) : {'errCode': code, 'errMsg': msg, 'data': data}
-err_code = lambda errcode_ret : errcode_ret['errCode']
-err_msg = lambda errcode_ret : errcode_ret['errMsg']
-ret_data = lambda errcode_ret : errcode_ret['data']
+
+def errcode_ret(code, msg, data): return {
+    'errCode': code, 'errMsg': msg, 'data': data}
+
+
+def err_code(errcode_ret): return errcode_ret['errCode']
+def err_msg(errcode_ret): return errcode_ret['errMsg']
+def ret_data(errcode_ret): return errcode_ret['data']
+
+
+def load_conf(conf_path='etc/pin.conf'):
+    conf = configparser.ConfigParser()
+    if conf_path[0] == '/':
+        conf_file = conf_path
+    else:
+        conf_file = os.getcwd() + '/' + conf_path
+
+    if os.path.exists(conf_file):
+        conf.read(conf_file)
+    else:
+        conf_file = os.environ['PIN_CONF']
+        if os.path.exists(conf_file):
+            conf.read(conf_file)
+        else:
+            raise
+    return conf
+
 
 conf = load_conf()
-logger = get_logger()
+
 
 def get_conf(section, key, default):
     try:
@@ -20,15 +44,9 @@ def get_conf(section, key, default):
         logger.warning('Found No config of %s : %s' % (section, key))
         return default
 
-def load_conf(conf_path = 'etc/app.conf'):
-    conf = configparser.ConfigParser()
-    if conf_path[0] == '/':
-        conf_file = conf_path
-    else:
-        conf_file = os.getcwd() + '/'  + conf_path
-    conf.read(conf_file)
 
 def get_logger():
+    global conf
     try:
         level = conf.get('log', 'level')
     except configparser.Error:
@@ -42,7 +60,7 @@ def get_logger():
     try:
         form = conf.get('log', 'pattern')
         formatter = logging.Formatter(form)
-    except BaseError:
+    except Exception:
         form = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         formatter = logging.Formatter(form)
 
@@ -59,3 +77,6 @@ def get_logger():
     logger.addHandler(handler)
     logger.addHandler(console)
     return logger
+
+
+logger = get_logger()

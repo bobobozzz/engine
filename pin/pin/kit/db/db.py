@@ -8,6 +8,7 @@ import os
 import collections
 from dbutils.pooled_db import PooledDB
 
+
 def get_db(creator, get_dbconf):
     conn_pool = None
 
@@ -19,39 +20,46 @@ def get_db(creator, get_dbconf):
 
     return _get_conn
 
+
 def init_db(creator, get_dbconf):
     dbconf = get_dbconf()
     dbconf['creator'] = creator
     return build_conn_pool(dbconf)
 
+
 def build_conn_pool(dbconf):
     conn_pool = PooledDB(creator=dbconf['creator'],
-        host=dbconf['host'],
-        port=dbconf['port'],
-        db=dbconf['name'],
-        user=dbconf['user'],
-        passwd=dbconf['passwd'],
-        mincached=dbconf['mincached'],
-        maxcached=dbconf['maxcached'],
-        maxconnections=dbconf['maxconnections'],
-        maxshared=dbconf['maxshared'],
-        blocking=dbconf['blocking'],
-        ping=dbconf['ping'])
+                         host=dbconf['host'],
+                         port=dbconf['port'],
+                         db=dbconf['name'],
+                         user=dbconf['user'],
+                         passwd=dbconf['passwd'],
+                         mincached=dbconf['mincached'],
+                         maxcached=dbconf['maxcached'],
+                         maxconnections=dbconf['maxconnections'],
+                         maxshared=dbconf['maxshared'],
+                         blocking=dbconf['blocking'],
+                         ping=dbconf['ping'])
     return conn_pool
 
-db_conf_keys = ['host', 'port', 'name', 'user', 'passwd', 'mincached', 'maxcached', 'maxconnections', 'maxshared', 'blocking', 'ping']
 
-def get_dbconf_from(conf_file, section):
-    conf = configparser.ConfigParser()
-    conf.read(conf_file)
-    db_conf_values = list(map(lambda k : conf.get(section, k, fallback=None), db_conf_keys))
-    db_conf_values = list(map(lambda s : int(s) if s.isnumeric() else s, db_conf_values))
+db_conf_keys = ['host', 'port', 'name', 'user', 'passwd', 'mincached',
+                'maxcached', 'maxconnections', 'maxshared', 'blocking', 'ping']
+
+
+def get_dbconf_from(conf, section):
+    db_conf_values = list(map(lambda k: conf.get(
+        section, k, fallback=None), db_conf_keys))
+    db_conf_values = list(
+        map(lambda s: int(s) if s.isnumeric() else s, db_conf_values))
     return build_dbconf(db_conf_values)
+
 
 def build_dbconf(db_conf_values):
     return dict(zip(db_conf_keys, db_conf_values))
 
-def execute(conn, sqls, auto_commit = True, auto_close = True, hook_cur = None):
+
+def execute(conn, sqls, auto_commit=True, auto_close=True, hook_cur=None):
     if None is conn:
         return None
 
@@ -82,26 +90,30 @@ def execute(conn, sqls, auto_commit = True, auto_close = True, hook_cur = None):
             if auto_close and conn:
                 conn.close()
 
+
 def insert(conn, sqls, auto_close):
     def getlastid(cur):
         return cur.lastrowid()
 
-    return execute(conn, sqls, hook_cur = getlastid, auto_close = auto_close)
+    return execute(conn, sqls, hook_cur=getlastid, auto_close=auto_close)
+
 
 def update(conn, sql, param, auto_close):
     sqls = [(sql, param)]
-    return execute(conn, sqls, auto_close = auto_close)
+    return execute(conn, sqls, auto_close=auto_close)
+
 
 def query(conn, sql, param, auto_close=True):
     def getall(cur):
         return (cur.fetchall(), cur.description)
 
     sqls = [(sql, param)]
-    _, _, ret= execute(conn, sqls, hook_cur = getall)
+    _, _, ret = execute(conn, sqls, hook_cur=getall)
     if ret:
         return convert_ret(ret[0][0], ret[0][1])
     else:
         return None
+
 
 def convert_ret(res_all, description):
     rows = []
@@ -111,5 +123,5 @@ def convert_ret(res_all, description):
         row = {}
         for i in range(len(description)):
             row[description[i][0]] = res[i]
-        rows.append(row) 
+        rows.append(row)
     return rows

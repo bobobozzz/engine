@@ -5,7 +5,7 @@
 import os
 import sys
 import json
-import kit.util as util
+import pin.kit.util as util
 
 from jinja2 import Environment, \
     FileSystemLoader, \
