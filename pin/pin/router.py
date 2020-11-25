@@ -3,12 +3,18 @@
 #BoBoBo#
 
 import json
+import sys
 from http import HTTPStatus
 from functools import wraps
+from traceback import format_exc
 from pin.view import response_404
+from pin.view import response_json
+from pin.kit.util import html_escape
+from pin.kit.util import errcode_ret
+
 
 def router():
-    url_map={}
+    url_map = {}
 
     def route(url, response_):
         def wrapper_a(func):
@@ -16,7 +22,7 @@ def router():
                 try:
                     return response_(func(*args))
                 except Exception as e:
-                    return response_json(errcod_ret(-500, str(e), None))
+                    return response_json(errcode_ret(-500, str(e), None))
 
             url_map[url] = wrapper_b
             return wrapper_b
@@ -24,7 +30,9 @@ def router():
 
     return url_map, route
 
+
 urls, route = router()
+
 
 def dispatch(request):
     path = request['PATH_INFO']
@@ -32,7 +40,7 @@ def dispatch(request):
     if None is action:
         return response_404()
     else:
-        #TODO: check content-type and parse param
+        # TODO: check content-type and parse param
         method = request['REQUEST_METHOD']
         if 'GET' == method:
             query = request['QUERY_STRING']
@@ -40,23 +48,25 @@ def dispatch(request):
                 return action(None)
             else:
                 querys = query.split('&')
-                querys = list(map(lambda s : s.split('='), querys))
-                querys_key = list(map(lambda s:s[0], querys))
-                querys_value = list(map(lambda s:s[1], querys))
+                querys = list(map(lambda s: s.split('='), querys))
+                querys_key = list(map(lambda s: s[0], querys))
+                querys_value = list(map(lambda s: s[1], querys))
                 param = dict(zip(querys_key, querys_value))
                 return action(param)
         else:
             return action(request)
 
+
 def pin_app(debug=False):
 
     def app(environ, start_response):
+        nonlocal debug
         if debug:
             print(environ)
         try:
             response = dispatch(environ)
         except (KeyboardInterrupt, SystemExit, MemoryError):
-                raise
+            raise
         except Exception as E:
             err = '<h1>Critical error while processing request: %s</h1>' \
                   % html_escape(environ.get('PATH_INFO', '/'))
@@ -65,7 +75,8 @@ def pin_app(debug=False):
                        '<h2>Traceback:</h2>\n<pre>\n%s\n</pre>\n' \
                        % (html_escape(repr(E)), html_escape(format_exc()))
             headers = [('Content-Type', 'text/html; charset=UTF-8')]
-            start_response('500 INTERNAL SERVER ERROR', headers, sys.exc_info())
+            start_response('500 INTERNAL SERVER ERROR',
+                           headers, sys.exc_info())
             return [to_bytes(err)]
         else:
             if debug:
@@ -74,6 +85,7 @@ def pin_app(debug=False):
             return [to_bytes(response['content'])]
 
     return app
+
 
 def to_bytes(s, enc='utf8', err='strict'):
     return s.encode(enc)

@@ -31,4 +31,4 @@ services:
         python setup.py install
         cd /var/app/pin/tests
         pip install -r requirements-test.txt
-        python -m pytest ut
+        pytest -s ut
