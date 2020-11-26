@@ -19,6 +19,11 @@ def hello(param):
     return {"errCode": 0, "errMsg": "", "content": test_str}
 
 
+@route("/pin/test/exception", response_json)
+def exception(param):
+    raise Exception("Test exception message.")
+
+
 app = pin_app(True)
 
 
@@ -30,7 +35,14 @@ def test_server():
 
     print("Waiting server start for 10 seconds...")
     time.sleep(10)
+    param = {"p1": "v1"}
     resp = requests.get(
-        'http://localhost:8080/pin/test/hello_serv')
+        'http://localhost:8080/pin/test/hello_serv', params=param)
     r = resp.json()
     assert r["content"] == test_str
+
+    resp = requests.get(
+        'http://localhost:8080/pin/test/exception')
+    r = resp.json()
+    assert r["errCode"] == -500
+    assert r["errMsg"] == "Test exception message."

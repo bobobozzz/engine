@@ -11,6 +11,8 @@ from pin.view import response_404
 from pin.view import response_json
 from pin.kit.util import html_escape
 from pin.kit.util import errcode_ret
+from pin.kit.util import logger
+from io import BytesIO
 
 
 def router():
@@ -22,6 +24,7 @@ def router():
                 try:
                     return response_(func(*args))
                 except Exception as e:
+                    logger.exception(sys.exc_info())
                     return response_json(errcode_ret(-500, str(e), None))
 
             url_map[url] = wrapper_b
@@ -34,16 +37,15 @@ def router():
 urls, route = router()
 
 
-def dispatch(request):
-    path = request['PATH_INFO']
+def dispatch(environ):
+    path = environ['PATH_INFO']
     action = urls.get(path)
     if None is action:
         return response_404()
     else:
-        # TODO: check content-type and parse param
-        method = request['REQUEST_METHOD']
+        method = environ['REQUEST_METHOD']
         if 'GET' == method:
-            query = request['QUERY_STRING']
+            query = environ['QUERY_STRING']
             if '' == query:
                 return action(None)
             else:
@@ -53,8 +55,16 @@ def dispatch(request):
                 querys_value = list(map(lambda s: s[1], querys))
                 param = dict(zip(querys_key, querys_value))
                 return action(param)
+        elif 'POST' == method:
+            try:
+                environ_body_size = int(environ.get('CONTENT_LENGTH', 0))
+            except (ValueError):
+                environ_body_size = 0
+            environ_body = environ['wsgi.input'].read(environ_body_size)
+            # d = cgi.parse(environ_body)
+            return action(environ_body)
         else:
-            return action(request)
+            return action(environ)
 
 
 def pin_app(debug=False):
@@ -69,7 +79,7 @@ def pin_app(debug=False):
             raise
         except Exception as E:
             err = '<h1>Critical error while processing request: %s</h1>' \
-                  % html_escape(environ.get('PATH_INFO', '/'))
+                % html_escape(environ.get('PATH_INFO', '/'))
             if debug:
                 err += '<h2>Error:</h2>\n<pre>\n%s\n</pre>\n' \
                        '<h2>Traceback:</h2>\n<pre>\n%s\n</pre>\n' \
