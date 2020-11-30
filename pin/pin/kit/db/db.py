@@ -7,18 +7,38 @@ import abc
 import os
 import collections
 from dbutils.pooled_db import PooledDB
+import pymysql
 
 
-def get_db(creator, get_dbconf):
+def get_db(creator, get_conf):
     conn_pool = None
 
     def _get_conn():
         nonlocal conn_pool
         if None is conn_pool:
-            conn_pool = init_db(creator, get_dbconf)
+            conn_pool = init_db(creator, get_conf)
         return conn_pool.connection()
 
     return _get_conn
+
+
+def default_dbconf():
+    dbconf = {}
+
+    dbconf['creator'] = pymysql
+    dbconf['host'] = 'localhost'
+    dbconf['port'] = 3306
+    dbconf['name'] = 'db_test'
+    dbconf['user'] = 'test'
+    dbconf['passwd'] = 'test'
+    dbconf['mincached'] = 1
+    dbconf['maxcached'] = 1
+    dbconf['maxconnections'] = 1
+    dbconf['maxshared'] = 1
+    dbconf['blocking'] = 1
+    dbconf['ping'] = 'select 1'
+
+    return dbconf
 
 
 def init_db(creator, get_dbconf):

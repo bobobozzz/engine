@@ -26,11 +26,15 @@ def load_conf(conf_path='etc/pin.conf'):
     if os.path.exists(conf_file):
         conf.read(conf_file)
     else:
-        conf_file = os.environ['PIN_CONF']
-        if os.path.exists(conf_file):
-            conf.read(conf_file)
+        try:
+            conf_file = os.environ['PIN_CONF']
+        except KeyError:
+            print('Failed to load conf file by environ var PIN_CONF.')
         else:
-            raise
+            if os.path.exists(conf_file):
+                conf.read(conf_file)
+            else:
+                print('Failed to load conf file.')
     return conf
 
 
