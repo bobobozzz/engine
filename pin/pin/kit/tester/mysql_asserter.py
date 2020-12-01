@@ -19,8 +19,9 @@ def t(a):
         cfg = a["cfg"]
         dbconf["host"] = cfg["host"]
         dbconf["port"] = cfg["port"]
+        dbconf["name"] = cfg["database"]
         dbconf["user"] = cfg["user"]
-        dbconf["password"] = cfg["password"]
+        dbconf["passwd"] = cfg["password"]
     except Exception as e:
         raise AssertionError("Invalid test yaml script: " + str(e))
 

@@ -12,6 +12,7 @@ def test_t():
         mysql: &mysql
             host: engine.test.mysql
             port: 3306
+            database: db_test
             user: test
             password: test
         test-servs:
