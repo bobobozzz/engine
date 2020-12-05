@@ -111,14 +111,14 @@ def execute(conn, sqls, auto_commit=True, auto_close=True, hook_cur=None):
                 conn.close()
 
 
-def insert(conn, sqls, auto_close):
+def insert(conn, sqls, auto_close=True):
     def getlastid(cur):
-        return cur.lastrowid()
+        return cur.lastrowid
 
     return execute(conn, sqls, hook_cur=getlastid, auto_close=auto_close)
 
 
-def update(conn, sql, param, auto_close):
+def update(conn, sql, param, auto_close=True):
     sqls = [(sql, param)]
     return execute(conn, sqls, auto_close=auto_close)
 

@@ -19,3 +19,23 @@ def query(sql, param=None, get_conf=get_dbconf):
         return db.query(conn, sql, param)
     else:
         raise Exception("Failed to get db conn.")
+
+
+def insert(sql, param=None, get_conf=get_dbconf):
+    get_dbconn = db.get_db(pymysql, get_conf)
+    conn = get_dbconn()
+    if conn:
+        sqls = [(sql, param)]
+        return db.insert(conn, sqls)
+    else:
+        raise Exception("Failed to get db conn.")
+
+
+def execute(sql, param=None, get_conf=get_dbconf):
+    get_dbconn = db.get_db(pymysql, get_conf)
+    conn = get_dbconn()
+    if conn:
+        sqls = [(sql, param)]
+        return db.execute(conn, sqls)
+    else:
+        raise Exception("Failed to get db conn.")

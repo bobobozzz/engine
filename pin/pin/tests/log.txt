@@ -89,3 +89,31 @@ Traceback (most recent call last):
   File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
     raise Exception("Test exception message.")
 Exception: Test exception message.
+2020-12-01 06:46:46,231 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7f2586079900>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a13-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(*args))
+  File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.
+2020-12-01 06:48:03,964 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7f0d955f41c0>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a13-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(*args))
+  File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.
+2020-12-01 06:49:47,664 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7f131899cf80>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a13-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(*args))
+  File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.
+2020-12-01 06:58:57,162 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7f7d5f410ac0>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a13-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(*args))
+  File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.
