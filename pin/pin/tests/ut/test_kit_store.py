@@ -2,6 +2,7 @@
 
 import pytest
 import pin.kit.db.mysql as mysql
+import pin.kit.db.redis as redis
 
 
 def test_conn():
@@ -29,3 +30,10 @@ def test_store_data():
     # Query one record
     r = mysql.query('select * from t_test_store where field1="field1-value"')
     assert len(r) == 1
+
+
+def test_redis_access():
+    redis.set("testkey-1", "test-data")
+    assert "test-data" == redis.get("testkey-1")
+    redis.delete("testkey-1")
+    assert None == redis.get("testkey-1")

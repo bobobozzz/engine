@@ -11,6 +11,11 @@ services:
       - MYSQL_PASSWORD=test
     ports:
       - "3306:3306"
+  redis:
+    image: redis:6.0.0
+    container_name: engine.test.redis
+    ports:
+      - "6379:6379"
   pin:
     depends_on: 
       - mysql

@@ -4,26 +4,69 @@
 
 import os
 import pymysql
+from dbutils.pooled_db import PooledDB
 import pin.kit.db.db as db
 import pin.kit.util as util
 
 
-def get_dbconf():
-    return db.get_dbconf_from(util.conf, 'db')
+def default_mysqlconf():
+    return {
+        'creator': pymysql,
+        'host': 'localhost',
+        'port': 3306,
+        'name': 'db_test',
+        'user': 'test',
+        'passwd': 'test',
+        'mincached': 1,
+        'maxcached': 1,
+        'maxconnections': 1,
+        'maxshared': 1,
+        'blocking': 1,
+        'ping': 'select 1'
+    }
 
 
-def query(sql, param=None, get_conf=get_dbconf):
-    get_dbconn = db.get_db(pymysql, get_conf)
-    conn = get_dbconn()
+def get_mysqlconf():
+    try:
+        return util.conf['mysql']
+    except KeyError:
+        return None
+
+
+def get_db():
+    conn_pool = None
+
+    def _get_conn():
+        nonlocal conn_pool
+        if conn_pool is None:
+            conn_pool = init_db()
+        return conn_pool.connection()
+
+    return _get_conn
+
+
+def init_db():
+    dbconf = get_mysqlconf()
+    if dbconf is None:
+        dbconf = default_mysqlconf()
+    else:
+        dbconf['creator'] = pymysql
+    return PooledDB(**dbconf)
+
+
+db_mysql = get_db()
+
+
+def query(sql, param=None):
+    conn = db_mysql()
     if conn:
         return db.query(conn, sql, param)
     else:
         raise Exception("Failed to get db conn.")
 
 
-def insert(sql, param=None, get_conf=get_dbconf):
-    get_dbconn = db.get_db(pymysql, get_conf)
-    conn = get_dbconn()
+def insert(sql, param=None):
+    conn = db_mysql()
     if conn:
         sqls = [(sql, param)]
         return db.insert(conn, sqls)
@@ -31,9 +74,8 @@ def insert(sql, param=None, get_conf=get_dbconf):
         raise Exception("Failed to get db conn.")
 
 
-def execute(sql, param=None, get_conf=get_dbconf):
-    get_dbconn = db.get_db(pymysql, get_conf)
-    conn = get_dbconn()
+def execute(sql, param=None):
+    conn = db_mysql()
     if conn:
         sqls = [(sql, param)]
         return db.execute(conn, sqls)

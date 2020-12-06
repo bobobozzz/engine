@@ -3,10 +3,10 @@
 #BoBoBo#
 
 import pin.kit.db.mysql as mysql
-from pin.kit.db.db import default_dbconf
+from pin.kit.db.mysql import default_mysqlconf
 
 
-dbconf = default_dbconf()
+dbconf = default_mysqlconf()
 
 
 def t(a):
