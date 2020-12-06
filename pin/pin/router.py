@@ -54,7 +54,7 @@ def dispatch(environ):
                 querys_key = list(map(lambda s: s[0], querys))
                 querys_value = list(map(lambda s: s[1], querys))
                 param = dict(zip(querys_key, querys_value))
-                return action(param)
+                return action(**param)
         elif 'POST' == method:
             try:
                 environ_body_size = int(environ.get('CONTENT_LENGTH', 0))
