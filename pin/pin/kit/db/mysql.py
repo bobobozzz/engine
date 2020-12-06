@@ -6,7 +6,7 @@ import os
 import pymysql
 from dbutils.pooled_db import PooledDB
 import pin.kit.db.db as db
-import pin.kit.util as util
+from pin.kit.util import get_section
 
 
 def default_mysqlconf():
@@ -14,7 +14,7 @@ def default_mysqlconf():
         'creator': pymysql,
         'host': 'localhost',
         'port': 3306,
-        'name': 'db_test',
+        'db': 'db_test',
         'user': 'test',
         'passwd': 'test',
         'mincached': 1,
@@ -27,19 +27,17 @@ def default_mysqlconf():
 
 
 def get_mysqlconf():
-    try:
-        return util.conf['mysql']
-    except KeyError:
-        return None
+    return get_section('mysql')
 
 
-def get_db():
+def get_db(dbconf):
     conn_pool = None
 
     def _get_conn():
+        nonlocal dbconf
         nonlocal conn_pool
         if conn_pool is None:
-            conn_pool = init_db()
+            conn_pool = PooledDB(**dbconf)
         return conn_pool.connection()
 
     return _get_conn
@@ -51,13 +49,19 @@ def init_db():
         dbconf = default_mysqlconf()
     else:
         dbconf['creator'] = pymysql
-    return PooledDB(**dbconf)
+    return dbconf
 
 
-db_mysql = get_db()
+db_mysql = get_db(init_db())
+
+
+def reset_db(dbconf):
+    global db_mysql
+    db_mysql = get_db(dbconf)
 
 
 def query(sql, param=None):
+    global db_mysql
     conn = db_mysql()
     if conn:
         return db.query(conn, sql, param)
@@ -66,6 +70,7 @@ def query(sql, param=None):
 
 
 def insert(sql, param=None):
+    global db_mysql
     conn = db_mysql()
     if conn:
         sqls = [(sql, param)]
@@ -75,6 +80,7 @@ def insert(sql, param=None):
 
 
 def execute(sql, param=None):
+    global db_mysql
     conn = db_mysql()
     if conn:
         sqls = [(sql, param)]

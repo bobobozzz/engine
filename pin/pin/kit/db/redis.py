@@ -3,7 +3,7 @@
 #BoBoBo#
 
 import redis
-import pin.kit.util as util
+from pin.kit.util import get_section
 
 
 def default_redisconf():
@@ -16,18 +16,16 @@ def default_redisconf():
 
 
 def get_redisconf():
-    return util.conf['redis']
+    return get_section('redis')
 
 
-def get_redis():
+def get_redis(redisconf):
     pool = None
 
     def get_conn():
+        nonlocal redisconf
         nonlocal pool
         if pool is None:
-            redisconf = get_redisconf()
-            if redisconf is None:
-                redisconf = default_redisconf()
             pool = redis.ConnectionPool(**redisconf)
         conn = redis.Redis(connection_pool=pool, decode_responses=True)
         return conn
@@ -35,19 +33,34 @@ def get_redis():
     return get_conn
 
 
+def init_redis():
+    redisconf = get_redisconf()
+    if redisconf is None:
+        redisconf = default_redisconf()
+    return redisconf
+
+
+db_redis = get_redis(init_redis())
+
+
+def reset_db(dbconf):
+    global db_redis
+    db_redis = get_redis(dbconf)
+
+
 def get(key):
-    redis = get_redis()
-    conn = redis()
+    global db_redis
+    conn = db_redis()
     return conn.get(key)
 
 
 def set(key, value):
-    redis = get_redis()
-    conn = redis()
+    global db_redis
+    conn = db_redis()
     return conn.set(key, value)
 
 
 def delete(key):
-    redis = get_redis()
-    conn = redis()
+    global db_redis
+    conn = db_redis()
     return conn.delete(key)

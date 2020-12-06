@@ -41,6 +41,16 @@ def load_conf(conf_path='etc/pin.conf'):
 conf = load_conf()
 
 
+def get_section(section):
+    global conf
+    try:
+        m = conf[section]
+        n = map(lambda v: int(v) if v.isnumeric() else v, m.values())
+        return dict(zip(m, n))
+    except KeyError:
+        return None
+
+
 def get_conf(section, key, default):
     try:
         return conf.get(section, key)

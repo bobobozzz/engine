@@ -19,7 +19,7 @@ def t(a):
         cfg = a["cfg"]
         dbconf["host"] = cfg["host"]
         dbconf["port"] = cfg["port"]
-        dbconf["name"] = cfg["database"]
+        dbconf["db"] = cfg["database"]
         dbconf["user"] = cfg["user"]
         dbconf["passwd"] = cfg["password"]
     except Exception as e:
@@ -36,5 +36,6 @@ def get_dbconf():
 def assert_not_empty(sql):
     if not sql:
         raise AssertionError("None sql to assert not empty.")
-    r = mysql.query(sql, None, get_dbconf)
+    mysql.reset_db(get_dbconf())
+    r = mysql.query(sql)
     assert not r is None and len(r) > 0
