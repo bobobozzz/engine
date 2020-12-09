@@ -18,6 +18,7 @@ def response_(src):
 
 @route("/pin/test/hello", response_)
 def hello(param):
+    print(param)
     return "Hello Pin!"
 
 
@@ -25,7 +26,7 @@ def test_dispatch():
     request = {}
     request['PATH_INFO'] = '/pin/test/hello'
     request['REQUEST_METHOD'] = 'GET'
-    request['QUERY_STRING'] = ''
+    request['QUERY_STRING'] = 'param=testparam'
 
     response = dispatch(request)
     assert response['content'] == "Hello Pin!"

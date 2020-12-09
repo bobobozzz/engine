@@ -20,9 +20,9 @@ def router():
 
     def route(url, response_):
         def wrapper_a(func):
-            def wrapper_b(*args):
+            def wrapper_b(**args):
                 try:
-                    return response_(func(*args))
+                    return response_(func(**args))
                 except Exception as e:
                     logger.exception(sys.exc_info())
                     return response_json(errcode_ret(-500, str(e), None))
@@ -47,7 +47,7 @@ def dispatch(environ):
         if 'GET' == method:
             query = environ['QUERY_STRING']
             if '' == query:
-                return action(None)
+                return action()
             else:
                 querys = query.split('&')
                 querys = list(map(lambda s: s.split('='), querys))

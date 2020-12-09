@@ -20,8 +20,7 @@ def hello(p1):
 
 
 @route("/pin/test/exception", response_json)
-def exception(param):
-    assert param is None
+def exception():
     raise Exception("Test exception message.")
 
 

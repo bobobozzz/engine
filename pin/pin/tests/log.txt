@@ -173,3 +173,24 @@ Traceback (most recent call last):
   File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
     raise Exception("Test exception message.")
 Exception: Test exception message.
+2020-12-09 04:15:38,566 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7fe95ee7a940>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a15-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(*args))
+  File "/var/app/pin/tests/ut/test_server.py", line 25, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.
+2020-12-09 04:17:28,337 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7fa7c031e2c0>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a15-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(*args))
+  File "/var/app/pin/tests/ut/test_server.py", line 25, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.
+2020-12-09 04:28:14,546 - root - ERROR - (<class 'Exception'>, Exception('Test exception message.'), <traceback object at 0x7f8e130767c0>)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/engine_pin-0.2.10a15-py3.9.egg/pin/router.py", line 25, in wrapper_b
+    return response_(func(**args))
+  File "/var/app/pin/tests/ut/test_server.py", line 24, in exception
+    raise Exception("Test exception message.")
+Exception: Test exception message.

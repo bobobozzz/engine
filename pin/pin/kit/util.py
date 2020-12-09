@@ -100,3 +100,10 @@ def html_escape(string):
     """ Escape HTML special characters ``&<>`` and quotes ``'"``. """
     return string.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')\
                  .replace('"', '&quot;').replace("'", '&#039;')
+
+
+def assertNotNone(*params):
+    if all(params):
+        return True
+    else:
+        raise Exception('Error Parameter')
