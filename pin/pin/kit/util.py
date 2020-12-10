@@ -53,10 +53,20 @@ def get_section(section):
 
 def get_conf(section, key, default=None):
     try:
-        return conf.get(section, key)
+        s = conf.get(section, key)
+        if s.isnumeric():
+            try:
+                return int(s)
+            except ValueError:
+                return float(s)
+        else:
+            return s
     except configparser.Error:
         logger.warning('Found No config of %s : %s' % (section, key))
         return default
+    except Exception:
+        logger.warning('Invalid value of %s : %s' % (section, key))
+        return None
 
 
 def get_logger():
