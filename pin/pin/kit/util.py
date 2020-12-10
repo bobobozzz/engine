@@ -51,7 +51,7 @@ def get_section(section):
         return None
 
 
-def get_conf(section, key, default):
+def get_conf(section, key, default=None):
     try:
         return conf.get(section, key)
     except configparser.Error:

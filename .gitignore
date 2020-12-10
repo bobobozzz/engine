@@ -47,3 +47,4 @@ cscope*
 build
 dist
 *egg*
+log.txt
