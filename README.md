@@ -89,6 +89,18 @@ cd /path/to/engine/docker
 docker-compose up -d engine_compiler
 ```
 
+## About a new Web Framework: Pin
+
+It makes these things as follows work.
+
+1. A web service interfact should be a funtion 
+which param comes from http get/post paramters 
+and return a text/json/html/binary value.
+
+2. It`s process is direct and clear.
+
+3. Could be replaced easily with WSGI.
+
 ## Version Rules 
 
 N1.N2.N3[{a|b|rc}N][.dev][.postN]
