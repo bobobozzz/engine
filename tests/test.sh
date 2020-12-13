@@ -1,14 +1,14 @@
 #!/bin/bash
 
 echo "Start cleaning..."
-docker-compose -f docker-compose-test.yaml down
+docker-compose down
 echo "Cleaned all."
 
-docker-compose -f docker-compose-test.yaml up -d
+docker-compose up -d
 echo "Waiting..."
 sleep 5
 docker logs -f engine.test.pin
 
 echo "Start cleaning..."
-docker-compose -f docker-compose-test.yaml down
+docker-compose down
 echo "Cleaned all."

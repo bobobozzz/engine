@@ -22,7 +22,7 @@ services:
     image: python:3
     container_name: engine.test.pin
     volumes:
-      - ../../:/var/app
+      - ../pin:/var/app
     ports:
       - "8080:8080"
     environment:
@@ -32,8 +32,8 @@ services:
       - -c
       - |
         cd /var/app
-        pip install -r requirements.txt
+        pip install -r /var/app/requirements.txt
         python setup.py install
         cd /var/app/pin/tests
-        pip install -r requirements-test.txt
-        pytest -s ut
+        pip install -r /var/app/test-requirements.txt
+        pytest -s .
