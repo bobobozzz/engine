@@ -7,12 +7,14 @@ import sys
 from http import HTTPStatus
 from functools import wraps
 from traceback import format_exc
+from io import BytesIO
+import threading
+
 from pin.view import response_404
 from pin.view import response_json
 from pin.kit.util import html_escape
 from pin.kit.util import errcode_ret
 from pin.kit.util import logger
-from io import BytesIO
 
 
 def router():
@@ -93,6 +95,27 @@ def pin_app(debug=False):
                 print(response)
             start_response(response['status'], response['headers'])
             return [to_bytes(response['content'])]
+
+    return app
+
+
+def engine_app(wsgi_app):
+
+    def app(environ):
+        local = threading.local()
+
+        def start_response(status, headers):
+            nonlocal local
+            if None is headers:
+                headers = {}
+            headers["http_response_status"] = status
+            local.http_response_headers = headers
+
+        nonlocal wsgi_app
+        res = wsgi_app(environ, start_response)
+        response = {**local.http_response_headers}
+        response['body'] = res
+        return response
 
     return app
 
