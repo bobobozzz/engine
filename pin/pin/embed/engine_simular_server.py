@@ -18,10 +18,10 @@ import shutil
 
 class EngineHandler(BaseHTTPRequestHandler):
 
-    def do_GET(self):
+    def do_POST(self):
         self.do_POST()
 
-    def do_POST(self):
+    def do_GET(self):
         content_length = self.headers['content-length']
         if None is content_length:
             datas = '{}'
@@ -29,23 +29,36 @@ class EngineHandler(BaseHTTPRequestHandler):
             datas = self.rfile.read(int(content_length))
             datas = str(datas, 'utf-8')
 
+        paths = self.path.split('?')
         request = {}
-        request['path'] = self.path
-        request['body'] = datas
-        res = dispatch(request)
+        request['PATH_INFO'] = paths[0]
+        request['REQUEST_METHOD'] = 'GET'
+        request['QUERY_STRING'] = paths[1]
+        res = self.do_app(request)
 
-        self.send_response(res['status'])
-        for k, v in res['headers'].items():
-            self.send_header(k, v)
+        self.send_response(200)
+        for h in res['headers']:
+            self.send_header(h[0], h[1])
 
-        content = res['content']
-        content = content.encode('utf-8')
+        content = bytes()
+        for c in res['content']:
+            content = content + c
+
         f = io.BytesIO()
         f.write(content)
         f.seek(0)
         self.send_header('Content-Length', str(len(content)))
         self.end_headers()
         shutil.copyfileobj(f, self.wfile)
+
+    def do_app(self, request):
+        print('Receive request: ' + str(requests))
+        info = 'Need to be overrided by Subclass.'
+        print(info)
+        res = {}
+        res['headers'] = {}
+        res['content'] = info
+        return res
 
 
 def bootstrap(biz_handler_class=EngineHandler):
@@ -71,7 +84,7 @@ def bootstrap(biz_handler_class=EngineHandler):
 
 def serve(HandlerClass=BaseHTTPRequestHandler,
           ServerClass=ThreadingHTTPServer,
-          protocol="HTTP/1.1", port=8000, bind=None):
+          protocol="HTTP/1.1", port=8080, bind=None):
     ServerClass.address_family, addr = _get_best_family(bind, port)
 
     HandlerClass.protocol_version = protocol

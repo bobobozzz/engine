@@ -107,14 +107,15 @@ def engine_app(wsgi_app):
         def start_response(status, headers):
             nonlocal local
             if None is headers:
-                headers = {}
-            headers["http_response_status"] = status
+                headers = []
+            local.http_response_status = status
             local.http_response_headers = headers
 
         nonlocal wsgi_app
         res = wsgi_app(environ, start_response)
-        response = {**local.http_response_headers}
-        response['body'] = res
+        response = {}
+        response['headers'] = local.http_response_headers
+        response['content'] = res
         return response
 
     return app
