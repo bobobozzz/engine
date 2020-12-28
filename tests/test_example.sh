@@ -7,8 +7,8 @@ docker-compose down
 echo "Cleaned all."
 
 docker-compose up -d test-example-helloworld
-docker logs -f engine.test.example.helloword
+docker logs -f engine.test.example.helloworld
 
 echo "Start cleaning..."
-docker-compose down
+#docker-compose down
 echo "Cleaned all."

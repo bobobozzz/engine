@@ -54,7 +54,7 @@ services:
 
   test-example-helloworld:
       <<: *engine-common
-      container_name: engine.test.example.helloword
+      container_name: engine.test.example.helloworld
       command:
         - /bin/bash
         - -c 
@@ -65,9 +65,9 @@ services:
             --with-ld-opt="`python3.6-config --ldflags`"
           make
           make install
-          /usr/local/nginx/nginx -c /var/engine/example/helloword/ngx-conf/nginx.conf
+          /usr/local/nginx/sbin/nginx -c /var/engine/example/helloworld/ngx-conf/nginx.conf
           echo "Waiting 5 seconds..."
           sleep 5
           cd /var/engine/tests
-          ./prepare_pytest.sh
+          pip3 install -r ./test-requirements.txt
           pytest -v test_example_helloworld.py

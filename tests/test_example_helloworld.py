@@ -6,7 +6,7 @@ import requests
 
 
 def test_get():
-    resp = requests.get('http://localhost:8080/',
+    resp = requests.get('http://localhost:8080/hello',
                         params={'p1': 'v1', 'p2': 'v2'})
     assert not resp.text is None
     lines = resp.text.split('\n')
