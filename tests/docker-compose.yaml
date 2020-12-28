@@ -1,21 +1,6 @@
 version: '3'
 
 services:
-  mysql:
-    image: mysql:5.7
-    container_name: engine.test.mysql
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_DATABASE=db_test
-      - MYSQL_USER=test
-      - MYSQL_PASSWORD=test
-    ports:
-      - "3306:3306"
-  redis:
-    image: redis:6.0.0
-    container_name: engine.test.redis
-    ports:
-      - "6379:6379"
   pin:
     depends_on: 
       - mysql
@@ -37,3 +22,52 @@ services:
         cd /var/app/pin/tests
         pip install -r /var/app/test-requirements.txt
         pytest -s .
+
+  mysql:
+    image: mysql:5.7
+    container_name: engine.test.mysql
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_DATABASE=db_test
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=test
+    ports:
+      - "3306:3306"
+  redis:
+    image: redis:6.0.0
+    container_name: engine.test.redis
+    ports:
+      - "6379:6379"
+
+  engine-common: &engine-common
+      build:
+        context: ../../engine
+        dockerfile: ./docker/Dockerfile.centos8
+        args:
+          - nginx_version=1.19.3
+      volumes:
+        - ~/code/engine:/var/engine
+      ports:
+        - "8080:8080"
+      environment:
+        - C_INCLUDE_PATH=/usr/include/python3.6m
+
+  test-example-helloworld:
+      <<: *engine-common
+      container_name: engine.test.example.helloword
+      command:
+        - /bin/bash
+        - -c 
+        - |
+          ./configure --with-debug \
+            --prefix=/usr/local/nginx \
+            --add-module=/var/engine/engine \
+            --with-ld-opt="`python3.6-config --ldflags`"
+          make
+          make install
+          /usr/local/nginx/nginx -c /var/engine/example/helloword/ngx-conf/nginx.conf
+          echo "Waiting 5 seconds..."
+          sleep 5
+          cd /var/engine/tests
+          ./prepare_pytest.sh
+          pytest -v test_example_helloworld.py

@@ -27,11 +27,11 @@ static char * ngx_http_engine_merge_loc_conf(ngx_conf_t *cf, void * parent, void
 static ngx_int_t ngx_http_engine_handler(ngx_http_request_t *r);
 
 static char * ngx_http_engine_set_engine_flag(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
-static char * ngx_http_engine_set_pin_app(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+static char * ngx_http_engine_set_engine_app(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
 
 typedef struct {
     ngx_flag_t engine_flag;
-    ngx_str_t pin_app;
+    ngx_str_t engine_app;
 } ngx_http_engine_conf_t;
 
 ngx_command_t ngx_http_engine_commands[] = {
@@ -44,11 +44,11 @@ ngx_command_t ngx_http_engine_commands[] = {
         NULL
     },
     {
-        ngx_string("engine_pin_app"),
+        ngx_string("engine_app"),
         NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_HTTP_LMT_CONF | NGX_CONF_ANY,
-        ngx_http_engine_set_pin_app,
+        ngx_http_engine_set_engine_app,
         NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_engine_conf_t, pin_app),
+        offsetof(ngx_http_engine_conf_t, engine_app),
         NULL
     },
     ngx_null_command

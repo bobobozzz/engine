@@ -101,6 +101,8 @@ and return a text/json/html/binary value.
 
 3. Could be replaced easily with WSGI.
 
+4. It has tester module to make unittest looks like protocol docs.
+
 ## Version Rules 
 
 N1.N2.N3[{a|b|rc}N][.dev][.postN]

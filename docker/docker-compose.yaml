@@ -4,8 +4,8 @@ services:
   engine_compiler:
     container_name: engine.compiler
     build:
-      context: ./context
-      dockerfile: ../Dockerfile.centos8
+      context: ..
+      dockerfile: ./docker/Dockerfile.centos8
       args:
         - nginx_version=1.19.3
     volumes:
@@ -25,4 +25,3 @@ services:
         make
         make install
         tail -f /dev/null
-

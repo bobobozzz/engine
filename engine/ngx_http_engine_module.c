@@ -9,7 +9,7 @@ ngx_http_engine_create_loc_conf(ngx_conf_t *cf)
 	if(!mycf) return NULL;
 
 	mycf->engine_flag = NGX_CONF_UNSET;
-	mycf->pin_app = (ngx_str_t)ngx_null_string;
+	mycf->engine_app = (ngx_str_t)ngx_null_string;
 	return mycf;
 }
 
@@ -19,7 +19,7 @@ ngx_http_engine_merge_loc_conf(ngx_conf_t *cf, void * parent, void *child)
 	ngx_http_engine_conf_t * p = (ngx_http_engine_conf_t *)parent;
 	ngx_http_engine_conf_t * c = (ngx_http_engine_conf_t *)child;
 	ngx_conf_merge_value(p->engine_flag, c->engine_flag, 0);
-	ngx_conf_merge_str_value((c->pin_app), (p->pin_app), NGX_HTTP_ENGINE_TEXT);
+	ngx_conf_merge_str_value((c->engine_app), (p->engine_app), NGX_HTTP_ENGINE_TEXT);
 	return NGX_CONF_OK;
 }
 
@@ -43,9 +43,9 @@ ngx_http_engine_handler(ngx_http_request_t *r)
 	ngx_str_t type = ngx_string("text/plain");
 
     //app
-    u_char *path = ngx_pcalloc(r->pool, mycf->pin_app.len + 1);
-    path[mycf->pin_app.len] = '\0';
-    ngx_cpystrn(path, mycf->pin_app.data, mycf->pin_app.len + 1);
+    u_char *path = ngx_pcalloc(r->pool, mycf->engine_app.len + 1);
+    path[mycf->engine_app.len] = '\0';
+    ngx_cpystrn(path, mycf->engine_app.data, mycf->engine_app.len + 1);
     char *pyfile = (char *)path;
 
     ngx_str_t response = ngx_null_string;
@@ -114,7 +114,7 @@ ngx_http_engine_set_engine_flag(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 }
 
 static char *
-ngx_http_engine_set_pin_app(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
+ngx_http_engine_set_engine_app(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 {
 	ngx_str_t * value;
 	ngx_int_t nvalues;
@@ -131,7 +131,3 @@ ngx_http_engine_set_pin_app(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
 	
 	return NGX_CONF_OK;
 }
-
-
-
-
