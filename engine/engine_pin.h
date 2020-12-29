@@ -7,8 +7,12 @@
 #include <ngx_http.h>
 #include <ngx_http_request.h>
 
-#include "cp/py.h"
-#include "cp/util.h"
+char *get_str(PyObject *pyObject, char *key);
+void ex_py_content(char *py_content);
+
+char *engine_app_initialize(char *py_file, char *py_func);
+void engine_app_finalize();
+PyObject *engine_app_ex(PyObject *pArgsT);
 
 ngx_str_t pin(ngx_http_request_t *r);
 PyObject *assemble_dict(ngx_http_request_t *r);
