@@ -14,13 +14,10 @@ pin(ngx_http_request_t *r)
 PyObject *
 assemble_dict(ngx_http_request_t *r)
 {
-    //TODO: get body str from request or url param
-
     PyObject *pArgsT = PyTuple_New(1);
     PyObject *pArgsD = PyDict_New();
 
-    //TODO: assemble headers
-    PyDict_SetItemString(pArgsD, "body", Py_BuildValue("s", "test pin"));
+    PyDict_SetItemString(pArgsD, "QUERY_STRING", Py_BuildValue("s", "test pin"));
 
     PyTuple_SetItem(pArgsT, 0, pArgsD);
     return pArgsT;
@@ -34,13 +31,13 @@ assemble_response(ngx_http_request_t *r, PyObject *pin_response)
     r->headers_out.content_type.len = sizeof("text/plain") - 1;
     r->headers_out.content_type.data = (u_char*)"text/plain";
 
-    ngx_str_t ns = ngx_string("hello");
+    ngx_str_t ns = ngx_string("NULL");
     if(NULL != pin_response){
-        char *ret_str;
-        int len;
-        PyArg_ParseTuple(pin_response, "si", &ret_str, &len);
-        ns.len = len;
-        ns.data = (u_char *)ret_str;
+        PyObject *pContent = PyDict_GetItemString(pin_response, "content");
+        char *content;
+        PyArg_Parse(pContent, "s", &content);
+        ns.len = strlen(content);
+        ns.data = (u_char *)content;
     }
     return ns;
 }
@@ -58,11 +55,13 @@ engine_app_initialize(char *py_path, char *py_file, char *py_func)
     }
 
     PyRun_SimpleString("import sys");
-    string change_dir = "sys.path.append('../scripts')";
-    PyRun_SimpleString(change_dir.c_str());
+
+    char *syspath_stmt = NULL;
+    strcatn(&syspath_stmt, "sys.path.append('", py_path ,"')", NULL);
+    PyRun_SimpleString(syspath_stmt);
 
     PyObject *pName, *pModule;
-    pName =  PyUnicode_FromString(py_file);
+    pName = PyUnicode_FromString(py_file);
     pModule = PyImport_Import(pName);
     if (!pModule) {
         return "Failed to import python module";
@@ -97,6 +96,11 @@ ex_py_content(char *py_content)
 PyObject *
 engine_app_ex(PyObject *pArgsT)
 {
+    if (!pyo_engine_app || !PyCallable_Check(pyo_engine_app)) {
+        PyObject *pDict = PyDict_New();
+        PyDict_SetItemString(pDict, "content", Py_BuildValue("s", "ERROR"));
+        return pDict;
+    }
     return PyEval_CallObject(pyo_engine_app, pArgsT);
 }
 
@@ -111,4 +115,44 @@ get_str(PyObject *pyObj, char *key)
     char *value = NULL;
     PyArg_Parse(pValue, "s", value);
     return value;
+}
+
+
+size_t 
+strcatn(char **dst_out, ...)
+{
+    size_t len = 0, len_sub;
+    va_list argp;
+    char *src;
+    char *dst = NULL, *dst_p;
+
+    *dst_out = NULL;
+
+    va_start(argp, dst_out);
+    for (;;) {
+        if ((src = va_arg(argp, char *)) == NULL) break;
+        len += strlen(src);
+    }
+    va_end(argp);
+
+    if (len == 0) return 0;
+
+    dst = (char *)malloc(sizeof(char) * (len + 1));
+    if (dst == NULL) return -1;
+    dst_p = dst;
+
+    va_start(argp, dst_out);
+    for (;;) {
+        if ((src = va_arg(argp, char *)) == NULL) break;
+        len_sub = strlen(src);
+        memcpy(dst_p, src, len_sub);
+        dst_p += len_sub;
+    }
+
+    va_end(argp);
+    *dst_p = '\0';
+
+    *dst_out = dst;
+
+    return len;
 }

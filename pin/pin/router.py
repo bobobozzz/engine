@@ -115,10 +115,14 @@ def engine_app(wsgi_app):
         res = wsgi_app(environ, start_response)
         response = {}
         response['headers'] = local.http_response_headers
-        response['content'] = res
+        response['content'] = ''.join([from_bytes(b) for b in res])
         return response
 
     return app
+
+
+def from_bytes(b, dec='utf8', err='strict'):
+    return b.decode(dec)
 
 
 def to_bytes(s, enc='utf8', err='strict'):

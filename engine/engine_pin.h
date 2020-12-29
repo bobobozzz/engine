@@ -6,7 +6,11 @@
 #include <Python.h>
 #include <ngx_http.h>
 #include <ngx_http_request.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
+size_t strcatn(char **dst_out, ...);
 char *get_str(PyObject *pyObject, char *key);
 void ex_py_content(char *py_content);
 

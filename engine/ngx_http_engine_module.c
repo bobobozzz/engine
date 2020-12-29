@@ -77,16 +77,6 @@ ngx_http_engine_merge_loc_conf(ngx_conf_t *cf, void * parent, void *child)
 ngx_int_t
 ngx_http_engine_handler(ngx_http_request_t *r)
 {
-    /*
-	//return 405 if method is not GET, POST or HEAD
-	if (!(r->method & (NGX_HTTP_GET | NGX_HTTP_POST | NGX_HTTP_HEAD)))
-		return NGX_HTTP_NOT_ALLOWED;
-
-	//discard the request body
-	ngx_int_t rc = ngx_http_discard_request_body(r);
-	if (rc != NGX_OK)
-		return rc;
-		
 	ngx_str_t type = ngx_string("text/plain");
 
     ngx_str_t response = ngx_null_string;
@@ -97,7 +87,7 @@ ngx_http_engine_handler(ngx_http_request_t *r)
 	r->headers_out.content_length_n = response.len;
 	r->headers_out.content_type = type;
 
-	rc = ngx_http_send_header(r);
+	ngx_int_t rc = ngx_http_send_header(r);
 	if(rc == NGX_ERROR || rc > NGX_OK || r->header_only)
 		return rc;
 	ngx_buf_t *b = ngx_create_temp_buf(r->pool, response.len);
@@ -105,13 +95,9 @@ ngx_http_engine_handler(ngx_http_request_t *r)
 		return NGX_HTTP_INTERNAL_SERVER_ERROR;
 	
 	ngx_memcpy(b->pos, response.data, response.len);
-    */
-    ngx_log_error(NGX_LOG_EMERG, r->connection->log, 0, "ngx_http_engine_handler is called.");
-	ngx_buf_t *b = ngx_create_temp_buf(r->pool, 13);
-	ngx_memcpy(b->pos, "hello engine", 13);
-	b->last = b->pos + 13;
-	b->last_buf = 1;
 
+	b->last = b->pos + response.len;
+	b->last_buf = 1;
 
 	ngx_chain_t out;
 	out.buf = b;
@@ -128,7 +114,6 @@ ngx_http_set_engine_app(ngx_conf_t * cf, ngx_command_t * cmd, void * conf)
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
     clcf->handler = ngx_http_engine_handler;
     ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "Mount engine handler.", "");
-
 
 	ngx_str_t *value = cf->args->elts;
     ngx_str_t v1 = value[1];
