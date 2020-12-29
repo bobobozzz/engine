@@ -43,33 +43,38 @@ $ make install
 
 ## Usage
 
-1.Add environment variable ENGINEPATH which is the path to search python app script file.
+1.Program python wsgi app like this, or you can use web framework pin to develop wsgi app.
 
 ```
-export ENGINEPATH=path/to/app
+#File: hello.py
+
+from pin.router import engine_app
+
+
+def wsgi_app(environ, start_response):
+    params = environ['QUERY_STRING']
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/plain')]
+    start_response(status, response_headers)
+    return ['Hello World!\n'.encode('utf-8'), ('QUERY_STRING:' + params).encode('utf-8')]
+
+
+app = engine_app(wsgi_app)
 ```
 
 2.Configure nginx like the example below and start it:
 
 ```
-worker_processes  1;
-
-events {
-    worker_connections  1024;
-}
+events {}
 
 http {
-    default_type  application/octet-stream;
-
-    keepalive_timeout  65;
-
     server {
-        listen       80;
+        error_log /usr/local/nginx/logs/debug.log debug;
+        listen       8080;
         server_name  localhost;
 
         location /hello {
-            engine on;
-            engine_wsgi hello:app;
+            engine_app /path/to/app hello app;
         }
     }
 }
@@ -78,8 +83,9 @@ http {
 3.Request and get the response like this:
 
 ```sh
-$ curl http://localhost/hello
+$ curl -G --data "p1=v1&p2=v2" http://localhost:8080/hello
 Hello World!
+QUERY_STRING:p1=v1&p2=v2
 ```
 
 docker(just an enviroment to run engine from code now):
