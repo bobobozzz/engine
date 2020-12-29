@@ -70,4 +70,4 @@ services:
           sleep 5
           cd /var/engine/tests
           pip3 install -r ./test-requirements.txt
-          pytest -v test_example_helloworld.py
+          pytest -v test_example_helloworld.py || cat /usr/local/nginx/logs/debug.log
