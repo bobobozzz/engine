@@ -10,7 +10,7 @@
 char *get_str(PyObject *pyObject, char *key);
 void ex_py_content(char *py_content);
 
-char *engine_app_initialize(char *py_file, char *py_func);
+char *engine_app_initialize(char *py_path, char *py_file, char *py_func);
 void engine_app_finalize();
 PyObject *engine_app_ex(PyObject *pArgsT);
 

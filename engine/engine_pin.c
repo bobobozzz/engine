@@ -50,12 +50,16 @@ PyObject *pyo_engine_app_py;
 PyObject *pyo_engine_app;
 
 char *
-engine_app_initialize(char *py_file, char *py_func)
+engine_app_initialize(char *py_path, char *py_file, char *py_func)
 {
     Py_Initialize();
     if (!Py_IsInitialized()) {
         return "Failed to init python vm.";
     }
+
+    PyRun_SimpleString("import sys");
+    string change_dir = "sys.path.append('../scripts')";
+    PyRun_SimpleString(change_dir.c_str());
 
     PyObject *pName, *pModule;
     pName =  PyUnicode_FromString(py_file);
