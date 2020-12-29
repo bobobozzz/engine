@@ -17,7 +17,14 @@ assemble_dict(ngx_http_request_t *r)
     PyObject *pArgsT = PyTuple_New(1);
     PyObject *pArgsD = PyDict_New();
 
-    PyDict_SetItemString(pArgsD, "QUERY_STRING", Py_BuildValue("s", "test pin"));
+    ngx_str_t args = r->args;
+    char *dst = (char *)malloc(sizeof(char) * (args.len + 1));
+    memcpy(dst, args.data, args.len);
+    dst[args.len] = '\0';
+
+    PyDict_SetItemString(pArgsD, "QUERY_STRING", Py_BuildValue("s", dst));
+    free(dst);
+    dst = NULL;
 
     PyTuple_SetItem(pArgsT, 0, pArgsD);
     return pArgsT;
