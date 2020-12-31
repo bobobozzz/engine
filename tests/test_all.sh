@@ -3,3 +3,4 @@
 #BoBoBo#
 
 ./test_pin.sh
+./test_example.sh

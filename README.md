@@ -95,6 +95,13 @@ cd /path/to/engine/docker
 docker-compose up -d engine_compiler
 ```
 
+## Test
+
+You can run auto test shell scripts in directory tests.
+These scripts run on docker. You just need docker engine.
+
+The script **prepare_testvenv.sh** used for local testing of pin.
+
 ## About a new Web Framework: Pin
 
 It makes these things as follows work.
