@@ -40,34 +40,51 @@ services:
       - "6379:6379"
 
   engine-common: &engine-common
-      build:
-        context: ../../engine
-        dockerfile: ./docker/Dockerfile.centos8
-        args:
-          - nginx_version=1.19.3
-      volumes:
-        - ~/code/engine:/var/engine
-      ports:
-        - "8080:8080"
-      environment:
+    build:
+      context: ../../engine
+      dockerfile: ./docker/Dockerfile.centos8
+      args:
+        - nginx_version=1.19.3
+    volumes:
+      - ~/code/engine:/var/engine
+    ports:
+      - "8080:8080"
+    environment:
         - C_INCLUDE_PATH=/usr/include/python3.6m
 
+  test-c:
+    <<: *engine-common
+    container_name: engine.test.c
+    command:
+      - /bin/bash
+      - -c
+      - |
+        ./configure --with-debug \
+          --prefix=/usr/local/nginx \
+          --add-module=/var/engine/engine \
+          --with-ld-opt="`python3.6-config --ldflags`"
+        cd /var/engine/tests/testc
+        rm -rf *.o
+        make
+        ./alltests
+        tail -f /dev/null
+
   test-example-helloworld:
-      <<: *engine-common
-      container_name: engine.test.example.helloworld
-      command:
-        - /bin/bash
-        - -c 
-        - |
-          ./configure --with-debug \
-            --prefix=/usr/local/nginx \
-            --add-module=/var/engine/engine \
-            --with-ld-opt="`python3.6-config --ldflags`"
-          make
-          make install
-          cd /var/engine/pin
-          python3 setup.py install
-          /usr/local/nginx/sbin/nginx -c /var/engine/example/helloworld/ngx-conf/nginx.conf
-          cd /var/engine/tests
-          pip3 install -r ./test-requirements.txt
-          pytest -v test_example_helloworld.py || cat /usr/local/nginx/logs/debug.log
+    <<: *engine-common
+    container_name: engine.test.example.helloworld
+    command:
+      - /bin/bash
+      - -c 
+      - |
+        ./configure --with-debug \
+          --prefix=/usr/local/nginx \
+          --add-module=/var/engine/engine \
+          --with-ld-opt="`python3.6-config --ldflags`"
+        make
+        make install
+        cd /var/engine/pin
+        python3 setup.py install
+        /usr/local/nginx/sbin/nginx -c /var/engine/example/helloworld/ngx-conf/nginx.conf
+        cd /var/engine/tests
+        pip3 install -r ./test-requirements.txt
+        pytest -v test_example_helloworld.py || cat /usr/local/nginx/logs/debug.log

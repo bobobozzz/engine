@@ -3,17 +3,16 @@
 
 #include "test_engine_pin.h"
 #include <string.h>
-
-
-char* StrToUpper(char* str) {
-    return str;
-}
+#include <stdlib.h>
 
 
 void TestStrCat(CuTest *tc) {
-    char* input = strdup("hello world");
-    char* actual = StrToUpper(input);
-    char* expected = "HELLO WORLD";
+    char* actual = NULL;
+    char* s1 = strdup("a");
+    char* s2 = strdup("b");
+    char* s3 = strdup("c");
+    strcatn(&actual, s1, s2, s3, NULL);
+    char* expected = "abc";
     CuAssertStrEquals(tc, expected, actual);
 }
 
