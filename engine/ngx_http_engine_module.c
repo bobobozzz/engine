@@ -77,32 +77,26 @@ ngx_http_engine_merge_loc_conf(ngx_conf_t *cf, void * parent, void *child)
 ngx_int_t
 ngx_http_engine_handler(ngx_http_request_t *r)
 {
+    ngx_str_t response = pin(r);
+
 	ngx_str_t type = ngx_string("text/plain");
-
-    ngx_str_t response = ngx_null_string;
-    
-    response = pin(r);
-
 	r->headers_out.status = NGX_HTTP_OK;
 	r->headers_out.content_length_n = response.len;
 	r->headers_out.content_type = type;
-
 	ngx_int_t rc = ngx_http_send_header(r);
 	if(rc == NGX_ERROR || rc > NGX_OK || r->header_only)
 		return rc;
+
 	ngx_buf_t *b = ngx_create_temp_buf(r->pool, response.len);
 	if(b == NULL)
 		return NGX_HTTP_INTERNAL_SERVER_ERROR;
-	
 	ngx_memcpy(b->pos, response.data, response.len);
-
 	b->last = b->pos + response.len;
 	b->last_buf = 1;
 
 	ngx_chain_t out;
 	out.buf = b;
 	out.next = NULL;
-
 	return ngx_http_output_filter(r, &out);
 }
 
