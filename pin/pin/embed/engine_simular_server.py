@@ -40,9 +40,8 @@ class EngineHandler(BaseHTTPRequestHandler):
         for h in res['headers']:
             self.send_header(h[0], h[1])
 
-        content = bytes()
-        for c in res['content']:
-            content = content + c
+        content = res['content']
+        content = content.encode('utf8')
 
         f = io.BytesIO()
         f.write(content)

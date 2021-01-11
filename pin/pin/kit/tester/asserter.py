@@ -7,9 +7,9 @@ import pytest
 from pin.kit.tester import *
 
 
-def test_by_yaml(tests_yaml):
+def t_yaml(tyaml):
     try:
-        tests = yaml.load(tests_yaml, Loader=yaml.CLoader)
+        tests = yaml.load(tyaml, Loader=yaml.CLoader)
     except Exception:
         pytest.fail("Wrong tests yaml.")
 
@@ -18,6 +18,9 @@ def test_by_yaml(tests_yaml):
 
 
 def t_case(serv):
+    skip = serv.get("skip")
+    if skip:
+        return True
     asserts = serv["asserts"]
     list(map(lambda a: do_assert(a), asserts))
 

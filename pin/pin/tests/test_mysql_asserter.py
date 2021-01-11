@@ -2,12 +2,12 @@
 
 #BoBoBo#
 
-from pin.kit.tester.asserter import test_by_yaml
+from pin.kit.tester.asserter import t_yaml
 
 
 def test_t():
 
-    tests_yaml = """
+    tyaml = """
         mysql: &mysql
             host: engine.test.mysql
             port: 3306
@@ -22,5 +22,12 @@ def test_t():
                       cfg: *mysql
                       param:
                         assert-not-empty: "select 2"
+            skip-send-login-smscode:
+                skip: !!bool true
+                asserts: # This is parameter standard of pin.kit.tester .
+                    - asserter: !!python/module:pin.kit.tester.mysql_asserter
+                      cfg: *mysql
+                      param:
+                        assert-not-empty: "select 1"
     """
-    test_by_yaml(tests_yaml)
+    t_yaml(tyaml)

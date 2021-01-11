@@ -69,7 +69,7 @@ def dispatch(environ):
             return action(environ)
 
 
-def pin_app(debug=False):
+def pin_app(debug):
 
     def app(environ, start_response):
         nonlocal debug

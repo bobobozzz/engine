@@ -9,17 +9,17 @@ import pin.embed.engine_simular_server as server
 import requests
 import time
 
+app = engine_app(pin_app(True))
+
 test_str = "Hello Pin from embed server."
+test_res = {"errCode": 0, "errMsg": None, "data": test_str}
 
 
-@route("/pin/test/hello_serv", response_json)
+@route("/pin/test/engine/hello_serv", response_json)
 def hello(p1):
     global test_str
     print(str(p1))
-    return {"errCode": 0, "errMsg": "", "content": test_str}
-
-
-app = engine_app(pin_app(True))
+    return test_res
 
 
 class AppHandler(server.EngineHandler):
@@ -41,6 +41,6 @@ def test_server():
     time.sleep(10)
     param = {"p1": "v1"}
     resp = requests.get(
-        'http://127.0.0.1:8000/pin/test/hello_serv', params=param)
+        'http://127.0.0.1:8000/pin/test/engine/hello_serv', params=param)
     r = resp.json()
-    assert r["content"] == test_str
+    assert r == test_res

@@ -4,6 +4,7 @@ services:
   pin:
     depends_on: 
       - mysql
+      - redis
     image: python:3
     container_name: engine.test.pin
     volumes:
