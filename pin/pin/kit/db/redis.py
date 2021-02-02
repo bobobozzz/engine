@@ -3,7 +3,7 @@
 #BoBoBo#
 
 import redis
-from pin.kit.util import get_section
+from pin.kit.common import get_conf
 
 
 def default_redisconf():
@@ -15,52 +15,34 @@ def default_redisconf():
     }
 
 
-def get_redisconf():
-    return get_section('redis')
+def get_redis(conf=None):
+    if not conf:
+        conf = get_conf(None)
 
+    def get_redisconf():
+        nonlocal conf
+        default = default_redisconf()
+        redisconf = dict(
+            map(lambda k: (k, conf('redis', k, None)), default.keys()))
 
-def get_redis(redisconf):
-    pool = None
+        if redisconf['host'] is None:
+            redisconf = default
 
-    def get_conn():
-        nonlocal redisconf
-        nonlocal pool
-        if pool is None:
-            pool = redis.ConnectionPool(**redisconf)
-        conn = redis.Redis(connection_pool=pool, decode_responses=True)
-        return conn
+        return redisconf
 
-    return get_conn
+    def get_redis():
+        conn_pool = None
+        redisconf = get_redisconf()
 
+        def _get_conn():
+            nonlocal redisconf
+            nonlocal conn_pool
+            if conn_pool is None:
+                conn_pool = redis.ConnectionPool(**redisconf)
+            conn = redis.Redis(connection_pool=conn_pool,
+                               decode_responses=True)
+            return conn
 
-def init_redis():
-    redisconf = get_redisconf()
-    if redisconf is None:
-        redisconf = default_redisconf()
-    return redisconf
+        return _get_conn
 
-
-db_redis = get_redis(init_redis())
-
-
-def reset_db(dbconf):
-    global db_redis
-    db_redis = get_redis(dbconf)
-
-
-def get(key):
-    global db_redis
-    conn = db_redis()
-    return conn.get(key)
-
-
-def set(key, value):
-    global db_redis
-    conn = db_redis()
-    return conn.set(key, value)
-
-
-def delete(key):
-    global db_redis
-    conn = db_redis()
-    return conn.delete(key)
+    return get_redis()

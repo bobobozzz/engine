@@ -4,6 +4,7 @@
 
 import pin.kit.db.mysql as mysql
 from pin.kit.db.mysql import default_mysqlconf
+from pin.kit.db.mysql import get_db
 
 
 dbconf = default_mysqlconf()
@@ -30,12 +31,17 @@ def t(a):
 
 
 def get_dbconf():
-    return dbconf
+
+    def _dbconf(section, key, default=None):
+        global dbconf
+        return dbconf.get(key, default)
+
+    return _dbconf
 
 
 def assert_not_empty(sql):
     if not sql:
         raise AssertionError("None sql to assert not empty.")
-    mysql.reset_db(get_dbconf())
-    r = mysql.query(sql)
+    db = get_db(get_dbconf())
+    r = mysql.query(db, sql)
     assert not r is None and len(r) > 0

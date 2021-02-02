@@ -31,6 +31,7 @@ echo "export PYTHONPATH=${PYTHONPATH}:~/code/servs/suser" >> ./test-venv/bin/act
 source ./test-venv/bin/activate
 pip install -r ../../test-requirements.txt
 
+export PIN_CONF=${curdir}/pin.conf
 pytest -s $target
 
 echo "Go back to dir : ${curdir}"

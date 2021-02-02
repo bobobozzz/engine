@@ -6,7 +6,7 @@ import os
 import pymysql
 from dbutils.pooled_db import PooledDB
 import pin.kit.db.db as db
-from pin.kit.util import get_section
+from pin.kit.common import get_conf
 
 
 def default_mysqlconf():
@@ -26,52 +26,49 @@ def default_mysqlconf():
     }
 
 
-def get_mysqlconf():
-    return get_section('mysql')
+def get_db(conf=None):
+    if not conf:
+        conf = get_conf(None)
+
+    def get_dbconf():
+        nonlocal conf
+        default = default_mysqlconf()
+        dbconf = dict(
+            map(lambda k: (k, conf('mysql', k, None)), default.keys()))
+
+        if dbconf['host'] is None:
+            dbconf = default
+        else:
+            dbconf['creator'] = pymysql
+        return dbconf
+
+    def get_db():
+        conn_pool = None
+        dbconf = get_dbconf()
+        print('Use DB configuration: ' + str(dbconf))
+
+        def _get_conn():
+            nonlocal dbconf
+            nonlocal conn_pool
+            if conn_pool is None:
+                conn_pool = PooledDB(**dbconf)
+            return conn_pool.connection()
+
+        return _get_conn
+
+    return get_db()
 
 
-def get_db(dbconf):
-    conn_pool = None
-
-    def _get_conn():
-        nonlocal dbconf
-        nonlocal conn_pool
-        if conn_pool is None:
-            conn_pool = PooledDB(**dbconf)
-        return conn_pool.connection()
-
-    return _get_conn
-
-
-def init_db():
-    dbconf = get_mysqlconf()
-    if dbconf is None:
-        dbconf = default_mysqlconf()
-    else:
-        dbconf['creator'] = pymysql
-    return dbconf
-
-
-db_mysql = get_db(init_db())
-
-
-def reset_db(dbconf):
-    global db_mysql
-    db_mysql = get_db(dbconf)
-
-
-def query(sql, param=None):
-    global db_mysql
-    conn = db_mysql()
+def query(db, sql, param=None):
+    conn = db()
     if conn:
         return db.query(conn, sql, param)
     else:
         raise Exception("Failed to get db conn.")
 
 
-def insert(sql, param=None):
-    global db_mysql
-    conn = db_mysql()
+def insert(db, sql, param=None):
+    conn = db()
     if conn:
         sqls = [(sql, param)]
         return db.insert(conn, sqls)
@@ -79,9 +76,8 @@ def insert(sql, param=None):
         raise Exception("Failed to get db conn.")
 
 
-def execute(sql, param=None):
-    global db_mysql
-    conn = db_mysql()
+def execute(db, sql, param=None):
+    conn = db()
     if conn:
         sqls = [(sql, param)]
         return db.execute(conn, sqls)

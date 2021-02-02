@@ -13,8 +13,7 @@ import threading
 from pin.view import response_404
 from pin.view import response_json
 from pin.kit.util import html_escape
-from pin.kit.util import errcode_ret
-from pin.kit.util import logger
+from pin.kit.common import errcode_ret
 
 
 def router():
@@ -26,7 +25,7 @@ def router():
                 try:
                     return response_(func(**args))
                 except Exception as e:
-                    logger.exception(sys.exc_info())
+                    print('Error' + sys.exc_info())
                     return response_json(errcode_ret(-500, str(e), None))
 
             url_map[url] = wrapper_b

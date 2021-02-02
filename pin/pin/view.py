@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import pin.kit.util as util
+import pin.kit.common as common
 
 from jinja2 import Environment, \
     FileSystemLoader, \
@@ -14,8 +15,10 @@ from jinja2 import Environment, \
     Template
 
 
-def tpl_path():
-    path = util.get_conf('app', 'template_path', None)
+def tpl_path(conf=None):
+    if not conf:
+        conf = common.get_conf(None)
+    path = conf('app', 'template_path', None)
     return path
 
 
@@ -68,3 +71,8 @@ def view(tpl_path):
 
 
 render = view(tpl_path())
+
+
+def config_render(conf):
+    global render
+    render = view(tpl_path(conf))
