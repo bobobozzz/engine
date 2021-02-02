@@ -5,7 +5,7 @@
 import os
 import pymysql
 from dbutils.pooled_db import PooledDB
-import pin.kit.db.db as db
+import pin.kit.db.db as dbbase
 from pin.kit.common import get_conf
 
 
@@ -62,7 +62,7 @@ def get_db(conf=None):
 def query(db, sql, param=None):
     conn = db()
     if conn:
-        return db.query(conn, sql, param)
+        return dbbase.query(conn, sql, param)
     else:
         raise Exception("Failed to get db conn.")
 
@@ -71,7 +71,7 @@ def insert(db, sql, param=None):
     conn = db()
     if conn:
         sqls = [(sql, param)]
-        return db.insert(conn, sqls)
+        return dbbase.insert(conn, sqls)
     else:
         raise Exception("Failed to get db conn.")
 
@@ -80,6 +80,6 @@ def execute(db, sql, param=None):
     conn = db()
     if conn:
         sqls = [(sql, param)]
-        return db.execute(conn, sqls)
+        return dbbase.execute(conn, sqls)
     else:
         raise Exception("Failed to get db conn.")

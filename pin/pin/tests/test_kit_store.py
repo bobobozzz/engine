@@ -36,7 +36,7 @@ def test_store_data():
 
 def test_redis_access():
     redis = get_redis()
-    redis.set("testkey-1", "test-data")
-    assert "test-data" == redis.get("testkey-1")
-    redis.delete("testkey-1")
-    assert None == redis.get("testkey-1")
+    redis().set("testkey-1", "test-data")
+    assert "test-data" == redis().get("testkey-1")
+    redis().delete("testkey-1")
+    assert None == redis().get("testkey-1")

@@ -30,7 +30,7 @@ def get_redis(conf=None):
 
         return redisconf
 
-    def get_redis():
+    def _get_redis():
         conn_pool = None
         redisconf = get_redisconf()
 
@@ -45,4 +45,4 @@ def get_redis(conf=None):
 
         return _get_conn
 
-    return get_redis()
+    return _get_redis()

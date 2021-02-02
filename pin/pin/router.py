@@ -9,6 +9,7 @@ from functools import wraps
 from traceback import format_exc
 from io import BytesIO
 import threading
+import traceback
 
 from pin.view import response_404
 from pin.view import response_json
@@ -25,7 +26,7 @@ def router():
                 try:
                     return response_(func(**args))
                 except Exception as e:
-                    print('Error' + sys.exc_info())
+                    print('Error: %s' % traceback.format_exc())
                     return response_json(errcode_ret(-500, str(e), None))
 
             url_map[url] = wrapper_b
