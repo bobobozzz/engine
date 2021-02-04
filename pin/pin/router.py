@@ -64,9 +64,16 @@ def dispatch(environ):
                 environ_body_size = int(environ.get('CONTENT_LENGTH', 0))
             except (ValueError):
                 environ_body_size = 0
+            print("Server received content length: " + str(environ_body_size))
             environ_body = environ['wsgi.input'].read(environ_body_size)
-            d = parse_qs(environ_body)
-            return action(**d)
+            print("Server received content: " + str(environ_body))
+            #d = parse_qs(environ_body)
+            #print("Server received content parsed: " + str(d))
+            #nd = escape_dict(d)
+            nd = environ_body.decode("utf8")
+            print("Server received content escaped: " + nd)
+            nd = json.loads(nd)
+            return action(**nd)
         else:
             return action(environ)
 
@@ -129,3 +136,21 @@ def from_bytes(b, dec='utf8', err='strict'):
 
 def to_bytes(s, enc='utf8', err='strict'):
     return s.encode(enc)
+
+
+def escape_dict(d):
+    sd = {}
+    for k in d.keys():
+        sk = escape(k.decode("utf8"))
+        if isinstance(d[k], dict):
+            sd[sk] = escape_dict(d[k])
+        elif isinstance(d[k], list):
+            nl = []
+            for i in range(len(d[k])):
+                nl.append(escape_dict(d[k][i]))
+            sd[sk] = nl
+        else:
+            v = escape(d[k].decode("utf8"))
+            sd[sk] = v
+
+    return sd
