@@ -18,7 +18,7 @@ def t(a):
 
         baseURL = "http://" + cfg["host"] + ":" + str(cfg["port"])
         url = baseURL + serv["path"]
-        request_param = json.load(serv["data"])
+        request_param = serv["data"]
     except Exception as e:
         raise AssertionError("Invalid test yaml script: " + str(e))
 
