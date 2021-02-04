@@ -22,7 +22,7 @@ def t_case(serv):
     if skip:
         return True
     asserts = serv["asserts"]
-    list(map(lambda a: do_assert(a), asserts))
+    list(map(lambda a: do_assert(asserts[a]), asserts.keys()))
 
 
 def do_assert(a):

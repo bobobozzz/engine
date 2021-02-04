@@ -19,10 +19,15 @@ PROTOCOL_CODE_NOTHING = 5
 
 
 def protocol_succeed(data):
-    return {
-        PROTOCOL_KEY_CODE: PROTOCOL_CODE_SUCCESS,
-        PROTOCOL_KEY_DATA: data
-    }
+    if data:
+        return {
+            PROTOCOL_KEY_CODE: PROTOCOL_CODE_SUCCESS,
+            PROTOCOL_KEY_DATA: data
+        }
+    else:
+        return {
+            PROTOCOL_KEY_CODE: PROTOCOL_CODE_SUCCESS,
+        }
 
 
 def protocol_nothing():

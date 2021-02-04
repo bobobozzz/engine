@@ -4,6 +4,7 @@
 
 import pytest
 import requests
+import json
 
 
 def t(a):
@@ -17,11 +18,11 @@ def t(a):
 
         baseURL = "http://" + cfg["host"] + ":" + str(cfg["port"])
         url = baseURL + serv["path"]
-        request_param = serv["data"]
+        request_param = json.load(serv["data"])
     except Exception as e:
         raise AssertionError("Invalid test yaml script: " + str(e))
 
-    resp = requests.get(url, params=request_param)
+    resp = requests.post(url, json=request_param)
     r = resp.json()
     assert assert_keys(asserter_param, r)
 

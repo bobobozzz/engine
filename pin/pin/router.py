@@ -10,6 +10,8 @@ from traceback import format_exc
 from io import BytesIO
 import threading
 import traceback
+from urllib.parse import parse_qs
+from html import escape
 
 from pin.view import response_404
 from pin.view import response_json
@@ -20,7 +22,7 @@ from pin.kit.common import errcode_ret
 def router():
     url_map = {}
 
-    def route(url, response_):
+    def route(url, response_=response_json):
         def wrapper_a(func):
             def wrapper_b(**args):
                 try:
@@ -63,8 +65,8 @@ def dispatch(environ):
             except (ValueError):
                 environ_body_size = 0
             environ_body = environ['wsgi.input'].read(environ_body_size)
-            # d = cgi.parse(environ_body)
-            return action(environ_body)
+            d = parse_qs(environ_body)
+            return action(**d)
         else:
             return action(environ)
 
