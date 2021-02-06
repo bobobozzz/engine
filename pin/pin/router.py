@@ -24,9 +24,9 @@ def router():
 
     def route(url, response_=response_json):
         def wrapper_a(func):
-            def wrapper_b(**args):
+            def wrapper_b(*args, **kw):
                 try:
-                    return response_(func(**args))
+                    return response_(func(*args, **kw))
                 except Exception as e:
                     print('Error: %s' % traceback.format_exc())
                     return response_json(errcode_ret(-500, str(e), None))

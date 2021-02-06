@@ -30,3 +30,7 @@ def test_dispatch():
 
     response = dispatch(request)
     assert response['content'] == "Hello Pin!"
+
+
+def test_controller_param():
+    hello(100)

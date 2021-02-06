@@ -83,12 +83,19 @@ def decide_conf_file(hint_path='./etc/pin.conf'):
 def get_conf(app_name, conf_file=None):
     conf_file = decide_conf_file(conf_file)
     conf = configparser.ConfigParser()
-    conf.read(conf_file)
+    try:
+        conf.read(conf_file)
+    except:
+        print("Failed to read conf file: " + str(conf_file))
+        conf = None
 
     def _get_conf(section, key, default=None):
         nonlocal conf
         nonlocal app_name
         try:
+            if conf is None:
+                raise Exception('None conf.')
+
             if app_name and '' != app_name:
                 section = app_name + '.' + section
             s = conf.get(section, key)
@@ -100,10 +107,12 @@ def get_conf(app_name, conf_file=None):
             else:
                 return s
         except configparser.Error:
-            print('Found No config of %s : %s' % (section, key))
+            print('Found No config of %s : %s' %
+                  (section, key) + ' Will use default.')
             return default
-        except Exception:
-            print('Invalid value of %s : %s' % (section, key))
-            return None
+        except Exception as e:
+            print('Faild to get value %s : %s' %
+                  (section, key) + ' Exception: ' + str(e))
+            return default
 
     return _get_conf
