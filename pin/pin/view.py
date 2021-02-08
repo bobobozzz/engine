@@ -55,6 +55,8 @@ def view(tpl_path):
     if not tpl_path:
         return None
 
+    print('Use template path: ' + tpl_path)
+
     jinja2_env = Environment(
         loader=FileSystemLoader(tpl_path),
         bytecode_cache=FileSystemBytecodeCache(tpl_path),

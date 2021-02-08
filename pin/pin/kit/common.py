@@ -107,8 +107,8 @@ def get_conf(app_name, conf_file=None):
             else:
                 return s
         except configparser.Error:
-            print('Found No config of %s : %s' %
-                  (section, key) + ' Will use default.')
+            print('Found No config of %s:%s' %
+                  (section, key) + '. Will use default.')
             return default
         except Exception as e:
             print('Faild to get value %s : %s' %
