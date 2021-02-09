@@ -2,6 +2,7 @@
 
 #BoBoBo#
 
+from datetime import date, datetime
 import os
 import sys
 import json
@@ -22,6 +23,16 @@ def tpl_path(conf=None):
     return path
 
 
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S')
+        elif isinstance(obj, date):
+            return obj.strftime('%Y-%m-%d')
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
 def response_json(result, headers=None):
     res = {}
     res['headers'] = []
@@ -29,7 +40,7 @@ def response_json(result, headers=None):
     if headers:
         res['headers'] += list(map(lambda k: (k, headers[k]), headers))
     res['status'] = '200 OK'
-    res['content'] = json.dumps(result)
+    res['content'] = json.dumps(result, cls=ComplexEncoder)
     return res
 
 
