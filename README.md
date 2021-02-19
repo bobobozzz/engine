@@ -16,7 +16,12 @@
 ## Todo
 
 * Make it to be a complete project to support enterprise-level development.
-* Support functional program well.
+* Transform external interface to inner interfaces.
+
+    Get value from header item which name is configured.
+    Transform it to the auth data.
+    The auth data is queried by the header value as key.
+    The auth data is saved in Redis.
 
 ## Requirement
 

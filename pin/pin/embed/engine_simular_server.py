@@ -18,22 +18,7 @@ import shutil
 
 class EngineHandler(BaseHTTPRequestHandler):
 
-    def do_POST(self):
-        self.do_POST()
-
-    def do_GET(self):
-        content_length = self.headers['content-length']
-        if None is content_length:
-            datas = '{}'
-        else:
-            datas = self.rfile.read(int(content_length))
-            datas = str(datas, 'utf-8')
-
-        paths = self.path.split('?')
-        request = {}
-        request['PATH_INFO'] = paths[0]
-        request['REQUEST_METHOD'] = 'GET'
-        request['QUERY_STRING'] = paths[1]
+    def call_app(self, request):
         res = self.do_app(request)
 
         self.send_response(200)
@@ -50,6 +35,23 @@ class EngineHandler(BaseHTTPRequestHandler):
         self.end_headers()
         shutil.copyfileobj(f, self.wfile)
 
+    def do_POST(self):
+        paths = self.path.split('?')
+        request = {}
+        request['PATH_INFO'] = paths[0]
+        request['REQUEST_METHOD'] = 'POST'
+        request['CONTENT_LENGTH'] = self.headers['content-length']
+        request['wsgi.input'] = self.rfile
+        self.call_app(request)
+
+    def do_GET(self):
+        paths = self.path.split('?')
+        request = {}
+        request['PATH_INFO'] = paths[0]
+        request['REQUEST_METHOD'] = 'GET'
+        request['QUERY_STRING'] = paths[1]
+        self.call_app(request)
+
     def do_app(self, request):
         print('Receive request: ' + str(requests))
         info = 'Need to be overrided by Subclass.'
@@ -63,7 +65,7 @@ class EngineHandler(BaseHTTPRequestHandler):
 def bootstrap(biz_handler_class=EngineHandler):
     args = server_args()
 
-    #handler_class = partial(biz_handler_class, directory=args.directory)
+    # handler_class = partial(biz_handler_class, directory=args.directory)
     handler_class = biz_handler_class
 
     # ensure dual-stack is not disabled; ref #38907

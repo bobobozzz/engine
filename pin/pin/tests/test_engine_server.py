@@ -28,19 +28,36 @@ class AppHandler(server.EngineHandler):
         return app(request)
 
 
-def test_server():
-    global test_str
-
+@pytest.fixture(scope='module', autouse=True)
+def start_server():
     def serve(host, port):
         server.serve(HandlerClass=AppHandler, port=port, bind=host)
 
     t = Thread(target=serve, args=('127.0.0.1',  8000), daemon=True)
     t.start()
-    #serve('127.0.0.1',  8000)
     print("Waiting server start for 10 seconds...")
     time.sleep(10)
+
+
+def test_server():
+    global test_str
+
     param = {"p1": "v1"}
     resp = requests.get(
         'http://127.0.0.1:8000/pin/test/engine/hello_serv', params=param)
     r = resp.json()
     assert r == test_res
+
+
+def test_post():
+    global test_str
+
+    param = {"p1": "v1"}
+    try:
+        resp = requests.post(
+            'http://127.0.0.1:8000/pin/test/engine/hello_serv', json=param)
+        r = resp.json()
+    except Exception as e:
+        print('Error: ' + str(e))
+    else:
+        assert r == test_res
