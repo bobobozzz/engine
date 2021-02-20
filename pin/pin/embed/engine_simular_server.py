@@ -14,20 +14,41 @@ from http import HTTPStatus
 import io
 import json
 import shutil
+import pin.embed.engine_simular_filter as engine_simular_filter
+from pin.kit.common import get_conf
+import importlib
 
 
 class EngineHandler(BaseHTTPRequestHandler):
 
-    def call_app(self, request):
-        res = self.do_app(request)
+    def __init__(self, *args, directory=None, **kwargs):
+        if directory is None:
+            directory = os.getcwd()
+        self.directory = directory
 
-        self.send_response(200)
-        for h in res['headers']:
-            self.send_header(h[0], h[1])
+        self.filters = {}
+        conf = get_conf('engine')
+        auth_filter_rule = conf('filter', 'auth_filter_rule')
+        self.filters['auth_filter_rule'] = auth_filter_rule
+        try:
+            self.token_storer = importlib.import_module(
+                conf('filter', 'token_storer'))
+        except Exception as e:
+            print('Failed to get token storer for: ' + str(e))
 
-        content = res['content']
+        super().__init__(*args, **kwargs)
+
+    def forbidden(self):
+        self.response(403, None, json.dumps(
+            {'errCode': 403, 'errMsg': 'Failed pass auth filter.'}))
+
+    def response(self, code, headers, content):
+        self.send_response(code)
+        if headers:
+            for h in headers:
+                self.send_header(h[0], h[1])
+
         content = content.encode('utf8')
-
         f = io.BytesIO()
         f.write(content)
         f.seek(0)
@@ -35,21 +56,47 @@ class EngineHandler(BaseHTTPRequestHandler):
         self.end_headers()
         shutil.copyfileobj(f, self.wfile)
 
-    def do_POST(self):
+    def call_app(self, request):
+        res = self.do_app(request)
+        self.response(200, res['headers'], res['content'])
+
+    def incoming_filter(self):
+        path = self.path.split('?')[0]
+        if engine_simular_filter.fit(self.filters['auth_filter_rule'], path):
+            headers = engine_simular_filter.auth_filter(
+                self.headers, self.token_storer)
+            if not headers:
+                return False
+            else:
+                self.headers = headers
+                return True
+
+        return True
+
+    def engine_request(self, method):
         paths = self.path.split('?')
         request = {}
         request['PATH_INFO'] = paths[0]
-        request['REQUEST_METHOD'] = 'POST'
-        request['CONTENT_LENGTH'] = self.headers['content-length']
+        request['AUTH'] = self.headers.get('Auth', None)
+        request['REQUEST_METHOD'] = method
+        request['CONTENT_LENGTH'] = self.headers.get('Content-Length', 0)
+        request['CONTENT_TYPE'] = self.headers.get(
+            'Content-Type', 'application/json')
         request['wsgi.input'] = self.rfile
+        if len(paths) > 1:
+            request['QUERY_STRING'] = paths[1]
+        return request
+
+    def do_POST(self):
+        if not self.incoming_filter():
+            return self.forbidden()
+        request = self.engine_request('POST')
         self.call_app(request)
 
     def do_GET(self):
-        paths = self.path.split('?')
-        request = {}
-        request['PATH_INFO'] = paths[0]
-        request['REQUEST_METHOD'] = 'GET'
-        request['QUERY_STRING'] = paths[1]
+        if not self.incoming_filter():
+            return self.forbidden()
+        request = self.engine_request('GET')
         self.call_app(request)
 
     def do_app(self, request):

@@ -48,17 +48,32 @@ def dispatch(environ):
         return response_404()
     else:
         method = environ['REQUEST_METHOD']
+        try:
+            auth_param = environ['AUTH']
+            if auth_param and '' != auth_param:
+                auth_param = json.loads(auth_param)
+        except Exception as e:
+            print('Failed to parse auth data for: ' + str(e))
+            auth_param = None
+
         if 'GET' == method:
             query = environ['QUERY_STRING']
             if '' == query:
-                return action()
+                if auth_param:
+                    return action(auth_param)
+                else:
+                    return action()
             else:
                 querys = query.split('&')
                 querys = list(map(lambda s: s.split('='), querys))
                 querys_key = list(map(lambda s: s[0], querys))
                 querys_value = list(map(lambda s: s[1], querys))
                 param = dict(zip(querys_key, querys_value))
-                return action(**param)
+                if auth_param:
+                    return action(auth_param, **param)
+                else:
+                    return action(**param)
+
         elif 'POST' == method:
             try:
                 environ_body_size = int(environ.get('CONTENT_LENGTH', 0))
@@ -67,13 +82,13 @@ def dispatch(environ):
             print("Server received content length: " + str(environ_body_size))
             environ_body = environ['wsgi.input'].read(environ_body_size)
             print("Server received content: " + str(environ_body))
-            #d = parse_qs(environ_body)
-            #print("Server received content parsed: " + str(d))
-            #nd = escape_dict(d)
             nd = environ_body.decode("utf8")
             print("Server received content escaped: " + nd)
             nd = json.loads(nd)
-            return action(**nd)
+            if auth_param:
+                return action(auth_param, **nd)
+            else:
+                return action(**nd)
         else:
             return action(environ)
 
