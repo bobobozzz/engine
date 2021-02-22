@@ -3,6 +3,9 @@
 #BoBoBo#
 
 
+import re
+
+
 def auth_filter(headers, token_storer):
     print('Headers after filter: ' + str(headers))
     new_headers = {}
@@ -25,4 +28,10 @@ def auth_filter(headers, token_storer):
 
 
 def fit(rule, path):
-    return True
+    if not rule or '' == rule:
+        return True
+
+    if re.match(rule, path, flags=0):
+        return True
+    else:
+        return False
