@@ -5,3 +5,4 @@ PyMySQL==0.10.1
 DBUtils==2.0
 requests==2.18.1
 redis==3.5.3
+pyyaml==5.3.1

@@ -1,0 +1,15 @@
+server:
+  suser: &suser-server
+    host: localhost
+    port: 8080
+
+servs:
+  test:
+    serv:
+      local:
+        module: pin.tests.test_servs
+        server: *suser-server
+      remote:
+        module: pin.tests.test_servs
+        server: *suser-server
+
