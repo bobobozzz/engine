@@ -56,7 +56,10 @@ def get_serv(path):
         server_cfg = y['server']
         try:
             module = importlib.import_module(module_path)
-        except:
+        except Exception as ex:
+            print('Warning: Failed to import local servs moudle: ' +
+                  module_path + ' for: ' + str(ex))
+            print('Use remote servs to: ' + path)
             return _remote_serv
         else:
             fn = getattr(module, elems[-1])
@@ -64,10 +67,8 @@ def get_serv(path):
 
 
 def just_data(resp):
-    print('Servs response: ' + str(resp))
-    content = json.loads(resp['content'])
+    if 'content' in resp:
+        content = json.loads(resp['content'])
+    if 'errCode' in resp:
+        content = resp
     return content['errCode'], content.get('errMsg', None), content.get('data', None)
-
-
-def response(result):
-    return {'content': json.dumps(result)}

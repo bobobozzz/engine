@@ -19,13 +19,14 @@ def test_local():
 def local(param1, param2):
     data = 'param1=' + str(param1) + ',' + 'param2=' + str(param2)
     result = {'errCode': 0, 'errMsg': 'succeed', 'data': data}
-    return servs.response(result)
+    return result
 
 
 @route("/test/serv/remote")
 def remote(param1, param2):
     data = 'param1=' + str(param1) + ',' + 'param2=' + str(param2)
-    return {"errCode": 0, "errMsg": "", "data": data}
+    result = {'errCode': 0, 'errMsg': 'succeed', 'data': data}
+    return result
 
 
 app = pin_app(True)
