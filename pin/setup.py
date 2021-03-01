@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='engine-pin',
-    version='0.3.0b19',
+    version='0.3.0b20',
     keywords=("framework", "WSGI", "functional", "nginx"),
     url='https://github.com/bobobozzz/engine.git',
     author='BoBoBo',
