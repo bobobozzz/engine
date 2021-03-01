@@ -38,7 +38,8 @@ def get_serv(path):
         if None is server_cfg:
             raise Exception('None server cfg.')
 
-        url = server_cfg['host'] + ':' + str(server_cfg['port']) + path
+        url = 'http://' + server_cfg['host'] + \
+            ':' + str(server_cfg['port']) + path
         resp = requests.post(url, json=kw)
         return resp.json()
 
