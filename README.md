@@ -12,16 +12,19 @@
 * Funcitonal web framework pin.
 * Pin has a python embed http server to support develop mode.
 * WSGI compliant.
-
-## Todo
-
-* Make it to be a complete project to support enterprise-level development.
-* Transform external interface to inner interfaces.
+* Transform external interface to inner interfaces:
 
     Get value from header item which name is configured.
     Transform it to the auth data.
     The auth data is queried by the header value as key.
     The auth data is saved in Redis.
+
+* Pin helps choosing to call methods by local or remote.
+* Make the project built by CI with Travis.
+
+## Todo
+
+* Make it to be a complete project to support enterprise-level development.
 
 ## Requirement
 
