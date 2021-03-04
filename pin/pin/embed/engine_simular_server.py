@@ -30,6 +30,7 @@ class EngineHandler(BaseHTTPRequestHandler):
         conf = get_conf('engine')
         auth_filter_rule = conf('filter', 'auth_filter_rule')
         self.filters['auth_filter_rule'] = auth_filter_rule
+        self.auth_header_name = conf('filter', 'auth_header_name')
         try:
             self.token_storer = importlib.import_module(
                 conf('filter', 'token_storer'))
@@ -64,7 +65,7 @@ class EngineHandler(BaseHTTPRequestHandler):
         path = self.path.split('?')[0]
         if engine_simular_filter.fit(self.filters['auth_filter_rule'], path):
             headers = engine_simular_filter.auth_filter(
-                self.headers, self.token_storer)
+                self.headers, self.auth_header_name, self.token_storer)
             if not headers:
                 return False
             else:

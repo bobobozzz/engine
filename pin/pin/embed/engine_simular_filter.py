@@ -6,15 +6,20 @@
 import re
 
 
-def auth_filter(headers, token_storer):
+def auth_filter(headers, auth_header_name, token_storer):
     print('Headers after filter: ' + str(headers))
     new_headers = {}
     new_headers.update(headers)
 
-    if not token_storer:
+    if not token_storer or not auth_header_name or '' == auth_header_name:
         return None
 
-    auth_token = headers['Auth-Token']
+    if not auth_header_name in headers:
+        auth_header_name = auth_header_name.lower()
+        if not auth_header_name in headers:
+            return None
+
+    auth_token = headers[auth_header_name]
     if not auth_token or '' == auth_token:
         return None
 
@@ -22,7 +27,7 @@ def auth_filter(headers, token_storer):
     if not auth_str or '' == auth_str:
         return None
 
-    del new_headers['Auth-Token']
+    del new_headers[auth_header_name]
     new_headers['Auth'] = auth_str
     return new_headers
 
